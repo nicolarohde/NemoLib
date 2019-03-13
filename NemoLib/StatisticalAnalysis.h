@@ -21,6 +21,10 @@
 #include <execution>
 #include <numeric>
 
+#if _C17_EXECUTION_AVAILABLE
+#include <execution>
+#endif
+
 class StatisticalAnalysis
 {
 
@@ -171,6 +175,8 @@ namespace Statistical_Analysis
 		} // end if
 
 		double targetFreq = (*(data.targetGraphRelFreqs))[label];
+		
+		// TODO count_if available in clang, check g++
 		std::size_t prePValue = std::count_if((*(data.randomGraphRelFreqs))[label].begin(), (*(data.randomGraphRelFreqs))[label].end(), [&](auto& x) { return x > targetFreq; });
 
 		return static_cast<double>(prePValue) / static_cast<double>((*(data.randomGraphRelFreqs))[label].size());
@@ -223,9 +229,13 @@ namespace Statistical_Analysis
 	///</returns>
 	inline double calcRandStdDev(graph64 label, double randMean, stats_data& data)
 	{
+		#if _C17_EXECUTION_AVAILABLE
 		double variance = std::reduce(std::execution::par_unseq, (*(data.randomGraphRelFreqs))[label].begin(), (*(data.randomGraphRelFreqs))[label].end(), 0.0,
 			[&](auto prev, auto cur) { return prev + pow((cur - randMean), 2); });
-
+		#else
+		double variance = std::accumulate((*(data.randomGraphRelFreqs))[label].begin(), (*(data.randomGraphRelFreqs))[label].end(), 0.0,
+			[&](auto prev, auto cur) { return prev + pow((cur - randMean), 2); });
+		#endif
 		return sqrt(variance / (data.randGraphCount - 1));
 	} // end method calcRandStdDev
 
@@ -234,7 +244,11 @@ namespace Statistical_Analysis
 	{
 		auto relFreqs = &(data.randomGraphRelFreqs[label]);
 
+		#if _C17_EXECUTION_AVAILABLE
 		double total = std::reduce(std::execution::par_unseq, relFreqs->begin(), relFreqs->end(), 0.0);
+		#else
+		double total = std::accumulate(relFreqs->begin(), relFreqs->end(), 0.0);
+		#endif
 
 		return (total / static_cast<double>(relFreqs->size()));
 	} // end method calcRandMean
@@ -246,4 +260,3 @@ namespace Statistical_Analysis
 
 
 #endif /* STATISTICALANALYSIS_H */
-

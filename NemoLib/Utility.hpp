@@ -5,8 +5,10 @@
 
 #include <random>
 #include <numeric>
-#include <execution>
 
+#if _C17_EXECUTION_AVAILABLE
+	#include <execution>
+#endif
 
 #ifndef _min
 #define _min(a,b) (a > b ? b : a)
@@ -38,8 +40,12 @@ T get_random_in_range(T min, T max)
 template <typename Iter, typename T>
 inline T get_vector_sum(Iter begin, Iter end, T initial = 0)
 {
-	return std::reduce(std::execution::par_unseq, begin, end, initial, [&](auto cur, auto prev) { return cur + prev; });
+	#if _C17_EXECUTION_AVAILABLE
+	return std::reduce(std::execution::par_unseq, begin, end, initial);
+	#else
+	return std::accumulate(begin, end, initial);
+	#endif
 }
 
 
-#endif 
+#endif

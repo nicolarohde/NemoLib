@@ -13,8 +13,6 @@
 
 #include "SubgraphProfile.h"
 #include "Utility.hpp"
-#include <numeric>
-#include <execution>
 
 using std::cout;
 using std::ostream;
@@ -52,7 +50,7 @@ unordered_map<graph64, uint64_t> SubgraphProfile::getlabelFreqMap(int subgraphsi
 {
 	unordered_map <graph64, uint64_t> labelFreqMap;
 
-	for (auto& p : labelVertexFreqMapMap) 
+	for (auto& p : labelVertexFreqMapMap)
 	{
 		uint64_t countLabel = get_vector_sum(p.second.begin(), p.second.end(), 0);
 		labelFreqMap[p.first] = countLabel / subgraphsize;
@@ -60,12 +58,12 @@ unordered_map<graph64, uint64_t> SubgraphProfile::getlabelFreqMap(int subgraphsi
 	return labelFreqMap;
 }
 
-unordered_map <graph64, double> SubgraphProfile::getRelativeFrequencies() 
+unordered_map <graph64, double> SubgraphProfile::getRelativeFrequencies()
 {
 	unordered_map<graph64, double> result(labelVertexFreqMapMap.size());
 	double totalcount = static_cast<double>(getTotalSubgaphCount());
 
-	for (auto& p : labelVertexFreqMapMap) 
+	for (auto& p : labelVertexFreqMapMap)
 	{
 		double countLabel = get_vector_sum(p.second.begin(), p.second.end(), 0.0);
 		result[p.first] = countLabel / totalcount;
@@ -73,4 +71,3 @@ unordered_map <graph64, double> SubgraphProfile::getRelativeFrequencies()
 
 	return result;
 }
-

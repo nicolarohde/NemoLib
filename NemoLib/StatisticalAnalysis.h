@@ -79,9 +79,20 @@ private:
 	}
 };
 
-
+/*
 namespace Statistical_Analysis
 {
+	// Forward declaration of namespace members:
+	struct stats_data;
+	std::unordered_map<graph64, double> getZScores(stats_data& data);
+	std::unordered_map<graph64, double> getPValues(stats_data& data);
+	double getPValue(graph64 label, stats_data& data);
+	double getZScore(graph64 label, double mean, double stdDev, stats_data& data);
+	double getZScore(graph64 label, stats_data& data);
+	double calcRandStdDev(graph64 label, double randMean, stats_data& data);
+	double calcRandMean(graph64 label, stats_data& data);
+
+
 	///<summary>
 	///   Provides relevant details to calculate statistics to functions in this namespace.
 	///</summary>
@@ -242,10 +253,10 @@ namespace Statistical_Analysis
 
 	inline double calcRandMean(graph64 label, stats_data& data)
 	{
-		auto relFreqs = &(data.randomGraphRelFreqs[label]);
+		std::vector<double>* relFreqs = &(*(data.randomGraphRelFreqs))[label];
 
 		#if _C17_EXECUTION_AVAILABLE
-		double total = std::reduce(std::execution::par_unseq, relFreqs->begin(), relFreqs->end(), 0.0);
+		double total = std::reduce(std::execution::par_unseq, relFreqs->begin(), relFreqs->end(), 0.0, [&](auto prev, auto cur) {return prev + cur; });
 		#else
 		double total = std::accumulate(relFreqs->begin(), relFreqs->end(), 0.0);
 		#endif
@@ -254,7 +265,7 @@ namespace Statistical_Analysis
 	} // end method calcRandMean
 
 } // end namespace Statistical_Analysis
-
+*/
 
 
 

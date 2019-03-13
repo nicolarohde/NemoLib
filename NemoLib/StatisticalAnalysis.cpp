@@ -13,6 +13,7 @@
 
 #include "StatisticalAnalysis.h"	// class header
 #include <numeric>					// reduce
+#include <iostream>					// ostream
 #include <execution>				// execution::par_unseq
 
 using std::unordered_map;
@@ -79,8 +80,8 @@ double StatisticalAnalysis::getPValue(graph64 label)
 }
 
 
-ostream& operator<<(ostream& out, StatisticalAnalysis& rstat) {
-
+ostream& operator<<(ostream& out, StatisticalAnalysis& rstat) 
+{
 	out << "Label\tRelFreq\t\tMean\t\tStDev\t\tZ-Score\t\tP-Value\n";
 	out.precision(3);
 

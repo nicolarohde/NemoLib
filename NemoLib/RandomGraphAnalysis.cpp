@@ -37,7 +37,8 @@ using std::unordered_map;
  * random graph pool
  */
 
-unordered_map <graph64, vector<double>> RandomGraphAnalysis::analyze(Graph& targetGraph, int randomGraphCount, int subgraphSize, const vector<double>& probs) 
+
+unordered_map <graph64, vector<double>> RandomGraphAnalysis::analyze(Graph& targetGraph, int randomGraphCount, int subgraphSize, const vector<double>& probs)
 {
 	// create the return map and fill it with the labels we found in the
 	// target graph, as those are the only labels about which we care

@@ -1,34 +1,25 @@
 #include "Config.hpp"
+#include "Utility.hpp"
 #include <iostream>
 #include "Graph.h"
 #include "SubgraphCount.h"
 #include "SubgraphProfile.h"
 #include "StatisticalAnalysis.h"
-#include "RandomGraphAnalysis.h"
 #include <chrono>
 #include <ctime>
 #include <string>
+#include "Stats.hpp"
 
 #if _USE_THREAD_POOL
 #include <ThreadPool.hpp>
 #include "ESU_Parallel.hpp"
+#include "Parallel_RandGraphAnalysis.hpp"
 #else
 #include "ESU.h"
+#include "RandomGraphAnalysis.h"
 #endif
 
-// Typedefs to make the clock and timepoint names shorter
-typedef std::chrono::high_resolution_clock	_Clock;
-#define CHRONO_DURATION(A, B) std::chrono::duration_cast<B>((A)).count()
-#define DURATION_IN_NANOS(A) CHRONO_DURATION(A, std::chrono::nanoseconds)
-#define DURATION_IN_MICROS(A) CHRONO_DURATION(A, std::chrono::microseconds)
-#define DURATION_IN_MILLIS(A) CHRONO_DURATION(A, std::chrono::milliseconds)
-#define DURATION_IN_SECS(A) CHRONO_DURATION(A, std::chrono::seconds)
 
-template <typename D, typename T>
-inline double chrono_duration(T start, T end)
-{
-	return std::chrono::duration_cast<D>(end - start).count();
-}
 
 
 //#pragma comment(lib,"NemoLib.lib")		// declare use of nemolib library to linker
@@ -56,11 +47,10 @@ void printmap(const T& _map)
 
 int main(int argc, char** argv)
 {
-	constexpr std::size_t motifSize = 4;
-	constexpr std::size_t randomCount = 6;
-	constexpr std::size_t n_threads = 16;
-
-	const string filename = "exampleGraph.txt";
+	const string filename = argc > 1 ? argv[1] : "exampleGraph.txt";
+	const std::size_t n_threads = argc > 2 ? atoi(argv[2]) : 16;
+	const std::size_t motifSize = argc > 3 ? atoi(argv[3]) : 4;
+	const std::size_t randomCount = argc > 4 ? atoi(argv[4]) : 1000;
 
 	SubgraphCount subc;
 	vector<double> probs(motifSize - 2, 1.0);
@@ -81,7 +71,7 @@ int main(int argc, char** argv)
 #if _USE_THREAD_POOL
 	ESU_Parallel::enumerate(targetg, dynamic_cast<SubgraphEnumerationResult*>(&subc), motifSize, &my_pool);
 	// alert all threads to terminate to save resources
-	my_pool.Kill_All();
+	//my_pool.Kill_All();
 #else
 	ESU::enumerate(targetg, dynamic_cast<SubgraphEnumerationResult*>(&subc), motifSize);
 #endif
@@ -89,15 +79,20 @@ int main(int argc, char** argv)
 
 	cout << "Analyzing random graphs..." << endl;
 
+#if _USE_THREAD_POOL
+	unordered_map<graph64, vector<double>> randLabelRelFreqsMap = std::move(Parallel_Analysis::analyze(targetg, randomCount, motifSize, probs, &my_pool));
+	my_pool.Kill_All();
+#else
 	unordered_map<graph64, vector<double>> randLabelRelFreqsMap = std::move(RandomGraphAnalysis::analyze(targetg, randomCount, motifSize, probs));
+#endif
 
 	cout << "Comparing target graph to random graphs" << endl;
 
-	StatisticalAnalysis stat(targetLabelRelFreqMap, randLabelRelFreqsMap, randomCount);
+	Statistical_Analysis::stats_data data{&targetLabelRelFreqMap, &randLabelRelFreqsMap, randomCount};
 
 	auto end = _Clock::now();
 
-	cout << stat << endl;
+	cout << data << endl;
 
 	cout << "Time = " << chrono_duration<milliseconds>(begin, end) << " milliseconds." << endl;
 	cout << "Time = " << chrono_duration<seconds>(begin, end) << " seconds." << endl;

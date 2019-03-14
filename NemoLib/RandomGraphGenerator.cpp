@@ -16,6 +16,10 @@
 #include <random>					// shuffle
 #include <numeric>					// reduce
 
+#if _C17_EXECUTION_AVAILABLE
+#include <execution>
+#endif
+
 using std::shuffle;
 using std::vector;
 
@@ -27,7 +31,7 @@ Graph RandomGraphGenerator::generate(Graph& inputGraph)
 	Graph randomGraph(inputGraph.isDirected());
 
 	// reserve memory for all vertices
-	vertexList.reserve(std::reduce(degreeSeq.begin(), degreeSeq.end(), 0));
+	vertexList.reserve(std::reduce(std::execution::par_unseq, degreeSeq.begin(), degreeSeq.end(), 0));
 
 	// generate randomized list of vertices
 	// the vertexList is a set where each node is represented by a number
@@ -46,33 +50,45 @@ Graph RandomGraphGenerator::generate(Graph& inputGraph)
 	// create edges
 	while (!vertexList.empty())
 	{
-		int u = get_random_in_range<int>(0, vertexList.size() - 1);
-		int v = get_random_in_range<int>(0, vertexList.size() - 1);
+		std::size_t u = get_random_in_range<std::size_t>(0, vertexList.size() - 1);
+		std::size_t v = get_random_in_range<std::size_t>(0, vertexList.size() - 1);
 
-		for(auto i = 0; u == v; i++)
+		//std::cerr << "[After generation]:\tu = " << u << "\tv = " << v << "\tsize  = " << vertexList.size() << std::endl;
+
+		// this avoids looping for a long time when only a few values
+		// the first case will not work if u = v = vertexList.size() - 1
+		// the second case will not work if u = v = 0
+		// we force these two cases into the other case
+		if (u == v)
 		{
-			if (i > 0)
+		//	std::cerr << "[Before Equal Check]:\tu = " << u << "\tv = " << v << "\tsize  = " << vertexList.size() << std::endl;
+
+			if ((get_random_in_range<std::size_t>(0, 1) % 2 == 0 && u < (vertexList.size() - 1)) || v == 0)
 			{
-				std::cerr << "looped multiple times in randomgraph generator!" << std::endl;
+		//		std::cerr << "[Entered If Block]:\tu = " << u << "\tv = " << v << "\tsize  = " << vertexList.size() << std::endl;
+				v = get_random_in_range<std::size_t>(u + 1, vertexList.size() - 1);
+		//		std::cerr << "[Exiting If block]:\tu = " << u << "\tv = " << v << "\tsize  = " << vertexList.size() << std::endl;
+			}
+			else
+			{
+		//		std::cerr << "[Entered Else Block]:\tu = " << u << "\tv = " << v << "\tsize  = " << vertexList.size() << std::endl;
+				u = get_random_in_range<std::size_t>(0, v - 1);
+		//		std::cerr << "[Exiting Else block]:\tu = " << u << "\tv = " << v << "\tsize  = " << vertexList.size() << std::endl;
 			}
 
-			// this avoids looping for a long time when only a few values
-			// the first case will not work if u = v = vertexList.size() - 1
-			// the second case will not work if u = v = 0
-			// we force these two cases into the other case
-			if((get_random_in_range<int>(0, 1) % 2 == 0 && u < (vertexList.size() - 1)) || v == 0)
-				v = get_random_in_range<int>(u + 1, vertexList.size() - 1);
-			else
-				u = get_random_in_range<int>(0, v - 1);
+		//	std::cerr << "[After Equal Check]:\tu = " << u << "\tv = " << v << "\tsize  = " << vertexList.size() << std::endl;
 		}
 
 		if (u > v)
 		{
+		//	std::cerr << "[Before swap]:\tu = " << u << "\tv = " << v << "\tsize  = " << vertexList.size() << std::endl;
 			std::swap(u, v);
+		//	std::cerr << "[After swap]:\tu = " << u << "\tv = " << v << "\tsize  = " << vertexList.size() << std::endl;
 		}
 
-		int edgeVertexV = vertexList[v];
-		int edgeVertexU = vertexList[u];
+		//std::cerr << "[Before access]:\tu = " << u << "\tv = " << v << "\tsize  = " << vertexList.size() << std::endl;
+		std::size_t edgeVertexV = vertexList[v];
+		std::size_t edgeVertexU = vertexList[u];
 
 		vertexList.erase(vertexList.begin() + v);
 		vertexList.erase(vertexList.begin() + u);
@@ -92,7 +108,7 @@ Graph RandomGraphGenerator::generate(Graph& inputGraph, vector <int> probs)
 	vector <int> vertexList;
 	Graph randomGraph(inputGraph.isDirected());
 
-	vertexList.reserve(std::reduce(degreeSeq.begin(), degreeSeq.end(), 0));
+	vertexList.reserve(std::reduce(std::execution::par_unseq, degreeSeq.begin(), degreeSeq.end(), 0));
 
 	// generate randomized list of vertices
 	// the vertexList is a set where each node is represented by a number

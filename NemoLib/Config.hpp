@@ -22,8 +22,8 @@
 #endif
 
 #if _C17_EXECUTION_AVAILABLE
-  template <typename Iter, typename T, typename F, typename S = std::execution::par_unseq>
-  T reduce_values(Iter begin, Iter end, T initial, F lambda)
+  template <typename Iter, typename T, typename F, typename S>
+  T reduce_values(Iter begin, Iter end, T initial, F lambda, S exec_type = std::execution::par_unseq)
   {
     return std::reduce(S, begin, end, initial, lambda);
   }

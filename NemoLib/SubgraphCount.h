@@ -17,7 +17,6 @@
 #include "SubgraphEnumerationResult.h"
 #include <numeric>
 #include <execution>
-#include "Global.hpp"
 
   /**
    * Representation of a Subgraph Count structure, which stores the number of
@@ -60,11 +59,9 @@ public:
 	/* Implement the add function of subgraph enumeration result*/
 	inline virtual void add(Subgraph& currentSubgraph, NautyLink& nautylink)
 	{
-		ESU_Parallel::nauty_mtx.lock();
 		graph64 label = nautylink.nautylabel(currentSubgraph);
 		uint64_t total = (labelFreqMap.count(label) == 0 ? 1 : labelFreqMap[label] + 1);
 		labelFreqMap[label] = total;
-		ESU_Parallel::nauty_mtx.unlock();
 	}
 #else
 	/* Implement the add function of subgraph enumeration result*/
@@ -79,6 +76,11 @@ public:
 	inline std::unordered_map<graph64, uint64_t> getlabeFreqMap() 
 	{
 		return labelFreqMap;
+	}
+
+	inline std::unordered_map<graph64, uint64_t>* getLabelFreqMapAccess()
+	{
+		return &labelFreqMap;
 	}
 
 

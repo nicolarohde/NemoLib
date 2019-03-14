@@ -11,6 +11,7 @@
   * Created on October 27, 2017, 11:36 AM
   */
 
+#include "Global.hpp"
 #include "NautyLink.h"
 
 graph64 NautyLink::getLabel(graph* canon, set* gv, const int G_N, const int G_M)
@@ -97,9 +98,9 @@ graph64 NautyLink::nautylabel(Subgraph& subgraph)
 			}
 		}
 	}
-
+	ESU_Parallel::nauty_mtx.lock();
 	nauty(nautyGraph, lab, ptn, NILSET, orbits, &options, &stats, workspace, 160 * MAXM, G_M, G_N, canon);
-
+	ESU_Parallel::nauty_mtx.unlock();
 	// get the cannonical label 
 	graph64 res_gr = getLabel(canon, gv, G_N, G_M);
 

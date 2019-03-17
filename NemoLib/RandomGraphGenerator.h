@@ -28,7 +28,7 @@ class RandomGraphGenerator
 {
 public:
     static Graph generate(Graph&);
-    static Graph generate(Graph&, std::vector<int>);
+    static Graph generate(Graph&, const std::vector<int>&);
 
 private:
     static std::vector<int> getDegreeSequenceVector(Graph&);

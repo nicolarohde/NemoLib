@@ -1,14 +1,13 @@
 #include "Config.hpp"
 #include "Utility.hpp"
-#include <iostream>
 #include "Graph.h"
 #include "SubgraphCount.h"
 #include "SubgraphProfile.h"
-#include "StatisticalAnalysis.h"
+#include "Stats.hpp"
 #include <chrono>
 #include <ctime>
 #include <string>
-#include "Stats.hpp"
+#include <iostream>
 
 #if _USE_THREAD_POOL
 #include <ThreadPool.hpp>
@@ -70,29 +69,28 @@ int main(int argc, char** argv)
 
 #if _USE_THREAD_POOL
 	ESU_Parallel::enumerate(targetg, dynamic_cast<SubgraphEnumerationResult*>(&subc), motifSize, &my_pool);
-	// alert all threads to terminate to save resources
-	//my_pool.Kill_All();
 #else
 	ESU::enumerate(targetg, dynamic_cast<SubgraphEnumerationResult*>(&subc), motifSize);
 #endif
 	unordered_map<graph64, double> targetLabelRelFreqMap(std::move(subc.getRelativeFrequencies()));
 
-	cout << "Analyzing random graphs..." << endl;
+	cout << "Analyzing random graphs..." << endl << endl;
 
 #if _USE_THREAD_POOL
 	unordered_map<graph64, vector<double>> randLabelRelFreqsMap = std::move(Parallel_Analysis::analyze(targetg, randomCount, motifSize, probs, &my_pool));
+	// alert all threads to terminate to save resources
 	my_pool.Kill_All();
 #else
 	unordered_map<graph64, vector<double>> randLabelRelFreqsMap = std::move(RandomGraphAnalysis::analyze(targetg, randomCount, motifSize, probs));
 #endif
 
-	cout << "Comparing target graph to random graphs" << endl;
+	cout << "Comparing target graph to random graphs ... " << endl << endl;
 
 	Statistical_Analysis::stats_data data{&targetLabelRelFreqMap, &randLabelRelFreqsMap, randomCount};
 
 	auto end = _Clock::now();
 
-	cout << data << endl;
+	cout << endl << data << endl;
 
 	cout << "Time = " << chrono_duration<milliseconds>(begin, end) << " milliseconds." << endl;
 	cout << "Time = " << chrono_duration<seconds>(begin, end) << " seconds." << endl;

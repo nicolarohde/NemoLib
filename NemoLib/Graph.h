@@ -28,6 +28,13 @@ public:
 	Graph(bool dir = false) noexcept : directed(dir) {}
 	
 
+	Graph(const std::vector<int>& _EDGES, const std::size_t _N, const bool _DIR = false) : directed(_DIR)
+	{
+		addVertices(_N);
+		addEdges(_EDGES);
+	}
+
+
 	Graph(std::string filename, bool dir = false) : directed(dir)
 	{ 
 		parse(filename); 
@@ -109,6 +116,25 @@ public:
 	{
 		adjacencyLists.push_back(std::unordered_set<vertex>());
 		return adjacencyLists.size() - 1;
+	}
+
+
+	inline void addVertices(std::size_t n)
+	{
+		adjacencyLists.reserve(adjacencyLists.size() + n);
+		for (auto i = 0; i < n; i++)
+		{
+			adjacencyLists.push_back(std::unordered_set<vertex>());
+		}
+	}
+
+	inline void addEdges(const std::vector<int> EDGES)
+	{
+		edges.reserve(edges.size() + (EDGES.size() / 2));
+		for (auto i = 0; i < EDGES.size(); i += 2)
+		{
+			addEdge(EDGES[i], EDGES[i + 1]);
+		}
 	}
 
 

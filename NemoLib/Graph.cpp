@@ -8,11 +8,11 @@
  * Created on October 12, 2017, 1:51 PM
  */
 
-#include "Graph.h"	// class header
-#include <sstream>	// stringstream
-#include <random>	// shuffle
-#include <fstream>	// ifstream
-#include "Utility.hpp"
+#include "Graph.h"		// class header
+#include <sstream>		// stringstream
+#include <algorithm>	// shuffle
+#include <fstream>		// ifstream
+#include "Utility.hpp"	// RNG_provider
 
 using std::string;
 using std::unordered_map;

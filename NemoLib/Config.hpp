@@ -3,7 +3,8 @@
 #ifndef __NEMO_CONFIG
 #define __NEMO_CONFIG
 
-#define _USE_THREAD_POOL 1			// use ThreadPool class for parallelization
+#define _USE_THREAD_POOL 1	// use ThreadPool class for parallelization
+#define _USE_CUDA 1			// use CUDA code for random graph building
 
 #if defined(__has_include)
 #define _CAN_CHECK_INCLUDE

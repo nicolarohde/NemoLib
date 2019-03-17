@@ -42,8 +42,8 @@ Graph RandomGraphGenerator::generate(Graph& inputGraph)
 		for (int degree = 0; degree < degreeSeq[vertex]; degree++)
 		{
 			vertexList.push_back(vertex);
-		}
-	}
+		} // end for degree
+	} // end for vertex
 
 	shuffle(vertexList.begin(), vertexList.end(), RNG_provider());
 
@@ -53,40 +53,27 @@ Graph RandomGraphGenerator::generate(Graph& inputGraph)
 		std::size_t u = get_random_in_range<std::size_t>(0, vertexList.size() - 1);
 		std::size_t v = get_random_in_range<std::size_t>(0, vertexList.size() - 1);
 
-		//std::cerr << "[After generation]:\tu = " << u << "\tv = " << v << "\tsize  = " << vertexList.size() << std::endl;
-
 		// this avoids looping for a long time when only a few values
 		// the first case will not work if u = v = vertexList.size() - 1
 		// the second case will not work if u = v = 0
 		// we force these two cases into the other case
 		if (u == v)
 		{
-		//	std::cerr << "[Before Equal Check]:\tu = " << u << "\tv = " << v << "\tsize  = " << vertexList.size() << std::endl;
-
 			if ((get_random_in_range<std::size_t>(0, 1) % 2 == 0 && u < (vertexList.size() - 1)) || v == 0)
 			{
-		//		std::cerr << "[Entered If Block]:\tu = " << u << "\tv = " << v << "\tsize  = " << vertexList.size() << std::endl;
 				v = get_random_in_range<std::size_t>(u + 1, vertexList.size() - 1);
-		//		std::cerr << "[Exiting If block]:\tu = " << u << "\tv = " << v << "\tsize  = " << vertexList.size() << std::endl;
-			}
+			} // end if
 			else
 			{
-		//		std::cerr << "[Entered Else Block]:\tu = " << u << "\tv = " << v << "\tsize  = " << vertexList.size() << std::endl;
 				u = get_random_in_range<std::size_t>(0, v - 1);
-		//		std::cerr << "[Exiting Else block]:\tu = " << u << "\tv = " << v << "\tsize  = " << vertexList.size() << std::endl;
-			}
-
-		//	std::cerr << "[After Equal Check]:\tu = " << u << "\tv = " << v << "\tsize  = " << vertexList.size() << std::endl;
-		}
+			} // end if
+		} // end else
 
 		if (u > v)
 		{
-		//	std::cerr << "[Before swap]:\tu = " << u << "\tv = " << v << "\tsize  = " << vertexList.size() << std::endl;
 			std::swap(u, v);
-		//	std::cerr << "[After swap]:\tu = " << u << "\tv = " << v << "\tsize  = " << vertexList.size() << std::endl;
-		}
+		} // end if
 
-		//std::cerr << "[Before access]:\tu = " << u << "\tv = " << v << "\tsize  = " << vertexList.size() << std::endl;
 		std::size_t edgeVertexV = vertexList[v];
 		std::size_t edgeVertexU = vertexList[u];
 
@@ -96,13 +83,13 @@ Graph RandomGraphGenerator::generate(Graph& inputGraph)
 		if (edgeVertexV == edgeVertexU) continue; // avoid self-edge
 
 		randomGraph.addEdge(edgeVertexU, edgeVertexV);
-	}
+	} // end while
 
 	return randomGraph;
-}
+} // end method generate
 
 
-Graph RandomGraphGenerator::generate(Graph& inputGraph, vector <int> probs)
+Graph RandomGraphGenerator::generate(Graph& inputGraph, const vector <int>& probs)
 {
 	vector<int> degreeSeq = std::move(getDegreeSequenceVector(inputGraph));
 	vector <int> vertexList;
@@ -181,7 +168,7 @@ vector<int> RandomGraphGenerator::getDegreeSequenceVector(Graph& inputGraph)
 {
 	vector <int> degreeSequenceVector(inputGraph.getSize(), 0);
 
-	for (int currentVertex = 0; currentVertex < inputGraph.getSize(); ++currentVertex) 
+	for (int currentVertex = 0; currentVertex < inputGraph.getSize(); currentVertex++) 
 	{
 		degreeSequenceVector[currentVertex] = inputGraph.getAdjacencyList(currentVertex).size();
 	}

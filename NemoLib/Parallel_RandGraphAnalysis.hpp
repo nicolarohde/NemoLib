@@ -40,8 +40,6 @@ namespace Parallel_Analysis
 
 		auto RGG_thread = std::thread([&](void) {CUDA_RandomGraphGenerator::generate(targetGraph, random_graphs, randomGraphCount); });
 
-		//CUDA_RandomGraphGenerator::generate(targetGraph, random_graphs, randomGraphCount);
-
 		for (int i = 0; i < randomGraphCount; i++)
 		{
 			while (random_graphs.size() < (i + 1))
@@ -60,7 +58,7 @@ namespace Parallel_Analysis
 
 		std::cout << "Waiting for jobs to finish ..." << std::endl;
 
-		my_pool->Synchronize(true);
+		my_pool->Synchronize(false);
 
 		for (auto& subgraphCount : all_subgraphs)
 		{
@@ -118,7 +116,7 @@ namespace Parallel_Analysis
 
 		std::cout << "Waiting for jobs to finish ..." << std::endl;
 
-		my_pool->Synchronize(true);
+		my_pool->Synchronize(false);
 
 		for (auto& subgraphCount : all_subgraphs)
 		{

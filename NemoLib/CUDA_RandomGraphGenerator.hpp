@@ -27,7 +27,7 @@ public:
 
 		// in the future this should be dependent on device memory
 		// available on the GPU doing the shuffling
-		const std::size_t shuffle_batch_size = 200; // number of graphs to build simultaneously
+		const std::size_t shuffle_batch_size = 320; // number of graphs to build simultaneously
 		const std::size_t num_batches = (N + shuffle_batch_size - 1) / shuffle_batch_size;
 		std::vector<int> vertexList;
 
@@ -106,7 +106,7 @@ protected:
 	static void init_wrapper(CUDA_Shuffler* shuffler, std::vector<int>& vertexList, const std::size_t shuffle_batch_size)
 	{
 		shuffler->init(vertexList, shuffle_batch_size);
-	}
+	} // end method init_wrapper
 
 
 	static void make_graphs(std::vector<Graph>& random_graphs, const std::vector<std::vector<int>> vertexLists, const bool directed)
@@ -114,8 +114,8 @@ protected:
 		for (auto& v : vertexLists)
 		{
 			random_graphs.push_back(Graph(v, (v.size() / 2), directed));
-		}
-	}
+		} // end for v
+	} // end method make_graphs
 
 };
 

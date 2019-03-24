@@ -22,9 +22,7 @@
 #include "SubgraphCount.h"
 #include <mutex>
 #include "Global.hpp"
-#if _C17_EXECUTION_AVAILABLE
-	#include <execution>	// execution::par_unseq
-#endif
+
 
   /**
    * ESU is a static class used for executing the Enumerate Subgraphs algorithm
@@ -60,11 +58,12 @@ namespace ESU_Parallel
 		} // end for i
 
 		my_pool->Synchronize();
-
+	
 		#if _C17_EXECUTION_AVAILABLE
 			*dynamic_cast<SubgraphCount*>(subgraphs) = std::reduce(std::execution::par, all_subgraphs.begin(), all_subgraphs.end(), SubgraphCount());
 		#else
 			*dynamic_cast<SubgraphCount*>(subgraphs) = std::accumulate(all_subgraphs.begin(), all_subgraphs.end(), SubgraphCount());
 		#endif
+		
 	} // end method enumerate
 };

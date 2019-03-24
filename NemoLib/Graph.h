@@ -128,6 +128,7 @@ public:
 		}
 	}
 
+
 	inline void addEdges(const std::vector<int> EDGES)
 	{
 		edges.reserve(edges.size() + (EDGES.size() / 2));

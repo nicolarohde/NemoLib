@@ -98,9 +98,13 @@ graph64 NautyLink::nautylabel(Subgraph& subgraph)
 			}
 		}
 	}
+#if _USE_THREAD_POOL
 	ESU_Parallel::nauty_mtx.lock();
+#endif
 	nauty(nautyGraph, lab, ptn, NILSET, orbits, &options, &stats, workspace, 160 * MAXM, G_M, G_N, canon);
+#if _USE_THREAD_POOL
 	ESU_Parallel::nauty_mtx.unlock();
+#endif
 	// get the cannonical label 
 	graph64 res_gr = getLabel(canon, gv, G_N, G_M);
 

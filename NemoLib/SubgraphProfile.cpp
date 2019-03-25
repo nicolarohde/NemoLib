@@ -12,6 +12,8 @@
   */
 
 #include "SubgraphProfile.h"
+#include "Subgraph.hpp"
+#include "NautyLink.h"
 #include "Utility.hpp"
 
 using std::cout;

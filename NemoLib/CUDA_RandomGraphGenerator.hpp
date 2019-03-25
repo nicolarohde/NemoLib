@@ -7,11 +7,11 @@
 
 #if _USE_CUDA
 
-#include <vector>				// vector
-#include <cstddef>				// size_t
-#include <thread>				// thread
-#include "Graph.h"				// Graph
-#include "Utility.hpp"			// get_vector_sum
+#include <vector>							// vector
+#include <cstddef>						// size_t
+#include <thread>							// thread
+#include "Graph.h"						// Graph
+#include "Utility.hpp"				// get_vector_sum
 #include "CUDA_Shuffler.hpp"	// CUDA_Shuffler
 
 class CUDA_RandomGraphGenerator
@@ -120,4 +120,4 @@ protected:
 };
 
 #endif	/* end if _USE_CUDA */
-#endif 
+#endif

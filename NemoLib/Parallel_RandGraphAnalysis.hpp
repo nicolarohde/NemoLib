@@ -2,17 +2,17 @@
 
 #include "Config.hpp"
 #include "Global.hpp"
-#include "RandomGraphAnalysis.h"
-#include "SubgraphCount.h"
+#include "graph64.hpp"
+#include "SubgraphCount.hpp"
 #include "RandESU.h"
 #include "Job.hpp"
 #include "ThreadPool.hpp"
 #include <unordered_map>
 #include <vector>
 #if _USE_CUDA
-#include "CUDA_RandomGraphGenerator.hpp"
+	#include "CUDA_RandomGraphGenerator.hpp"
 #else
-#include "RandomGraphGenerator.h"
+	#include "RandomGraphGenerator.h"
 #endif
 
 namespace Parallel_Analysis
@@ -27,7 +27,7 @@ namespace Parallel_Analysis
 
 		// create the return map and fill it with the labels we found in the
 		// target graph, as those are the only labels about which we care
-		// TODO consider changing this, as it creates the precondition of 
+		// TODO consider changing this, as it creates the precondition of
 		// executing the target graph analysis first
 		std::unordered_map<graph64, std::vector<double>> labelRelFreqsMap;
 		std::vector<SubgraphCount> all_subgraphs(randomGraphCount);
@@ -95,7 +95,7 @@ namespace Parallel_Analysis
 
 		// create the return map and fill it with the labels we found in the
 		// target graph, as those are the only labels about which we care
-		// TODO consider changing this, as it creates the precondition of 
+		// TODO consider changing this, as it creates the precondition of
 		// executing the target graph analysis first
 		std::unordered_map<graph64, std::vector<double>> labelRelFreqsMap;
 		std::vector<SubgraphCount> all_subgraphs(randomGraphCount);
@@ -110,7 +110,7 @@ namespace Parallel_Analysis
 			Graph randomGraph = std::move(RandomGraphGenerator::generate(targetGraph));
 
 			Job_Base* j = new enum_job(rand_esu, randomGraph, &all_subgraphs[i], subgraphSize, probs);
-			
+
 			my_pool->Add_Job(j);
 		}
 
@@ -143,10 +143,6 @@ namespace Parallel_Analysis
 		return labelRelFreqsMap;
 	} // end method analyze
 
-
-	
 #endif
 
 } // end namespace Parallel_Analysis
-
-

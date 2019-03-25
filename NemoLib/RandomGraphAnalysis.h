@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-/* 
+/*
  * File:   RandomGraphAnalysis.h
  * Author: Wooyoung
  *
@@ -23,17 +23,19 @@
 #define RANDOMGRAPHANALYSIS_H
 
 #include "Config.hpp"
-#include "Graph.h"
 #include "graph64.hpp"
 #include <unordered_map>
 #include <vector>
 
-class RandomGraphAnalysis 
+// forward declare type for references
+class Graph;
+
+class RandomGraphAnalysis
 {
 public:
+    // not allowed 
     RandomGraphAnalysis(void) = delete;
     static std::unordered_map<graph64, std::vector<double>> analyze(Graph&, int, int, const std::vector<double>&);
 };
 
 #endif /* RANDOMGRAPHANALYSIS_H */
-

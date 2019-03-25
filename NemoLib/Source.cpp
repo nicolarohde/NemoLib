@@ -1,7 +1,7 @@
 #include "Config.hpp"
 #include "Utility.hpp"
 #include "Graph.h"
-#include "SubgraphCount.h"
+#include "SubgraphCount.hpp"
 #include "SubgraphProfile.h"
 #include "Stats.hpp"
 #include <chrono>
@@ -9,12 +9,12 @@
 #include <iostream>
 
 #if _USE_THREAD_POOL
-#include <ThreadPool.hpp>
-#include "ESU_Parallel.hpp"
-#include "Parallel_RandGraphAnalysis.hpp"
+	#include <ThreadPool.hpp>
+	#include "ESU_Parallel.hpp"
+	#include "Parallel_RandGraphAnalysis.hpp"
 #else
-#include "ESU.h"
-#include "RandomGraphAnalysis.h"
+	#include "ESU.h"
+	#include "RandomGraphAnalysis.h"
 #endif
 
 
@@ -34,7 +34,7 @@ using std::chrono::milliseconds;
  */
 
 template<typename T>
-void printmap(const T& _map) 
+void printmap(const T& _map)
 {
 	for (const auto& p : _map)
 		cout << p.first << " => " << p.second << endl;

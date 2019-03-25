@@ -37,20 +37,30 @@ inline std::mt19937& RNG_provider(void)
 template<typename T>
 T get_random_in_range(T min, T max)
 {
-	typedef std::conditional<std::is_integral<T>::value, std::uniform_int_distribution<T>, std::uniform_real_distribution<T>>::type dist_t;
+	typedef typename std::conditional<std::is_integral<T>::value, std::uniform_int_distribution<T>, std::uniform_real_distribution<T>>::type dist_t;
 	dist_t dist{ min, max };
 
 	return dist(RNG_provider());
 } // end template get_random_in_range
 
 
-template <typename Iter, typename T>
+template <typename Iter, typename T = int>
 inline T get_vector_sum(Iter begin, Iter end, T initial = 0)
 {
 	#if _C17_EXECUTION_AVAILABLE
-	return std::reduce(std::execution::par_unseq, begin, end, initial);
+		return std::reduce(std::execution::par_unseq, begin, end, initial);
 	#else
-	return std::accumulate(begin, end, initial);
+		return std::accumulate(begin, end, initial);
+	#endif
+}
+
+template <typename Iter, typename T, typename F>
+inline T get_vector_sum(Iter begin, Iter end, T initial = 0, F lambda = std::plus<T>())
+{
+	#if _C17_EXECUTION_AVAILABLE
+		return std::reduce(std::execution::par_unseq, begin, end, initial, lambda);
+	#else
+		return std::accumulate(begin, end, initial, lambda);
 	#endif
 }
 

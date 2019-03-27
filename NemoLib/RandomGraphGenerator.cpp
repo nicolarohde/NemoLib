@@ -13,7 +13,7 @@
 
 #include "RandomGraphGenerator.h"	// class header
 #include "Utility.hpp"						// RNG_provider, get_random_in_range, get_vector_sum
-#include <random>									// shuffle
+#include <algorithm>							// shuffle
 
 using std::shuffle;
 using std::vector;

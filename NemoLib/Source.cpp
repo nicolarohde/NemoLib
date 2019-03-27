@@ -49,7 +49,7 @@ void display_help(string _name)
 	std::cout << "\t\t[# threads]       -- number of threads to use (ignored for sequential nemolib)." << std::endl;
 	std::cout << "\t\t[motif size]      -- size of motif to search for." << std::endl;
 	std::cout << "\t\t[# random graphs] -- number of random graphs to use for ESU." << std::endl;
-	std::cout << "\t\t[--h | --help]    -- use instead of file path to display this help menu." << std::endl;
+	std::cout << "\t\t[--h | --help]    -- use instead of [file path] to display this help menu." << std::endl;
 } // end method display_help
 
 

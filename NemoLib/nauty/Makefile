@@ -8,8 +8,8 @@ CXX=gcc
 # delete will generate 3 warnings that can be ignored, thus -w
 FLAGS=-pipe -Ofast
 
-ifeq ($(_USE_FAST_MATH), 1)
-	FLAGS := $(FLAGS) -ffast-math -ffinite-math-only
+ifeq ($(_USE_ADD_FLAGS), 1)
+	FLAGS += $(NEMOLIB_ADDITIONAL_FLAGS)
 endif
 
 all:

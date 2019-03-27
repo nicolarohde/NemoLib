@@ -59,7 +59,7 @@ namespace ESU_Parallel
 
 		my_pool->Synchronize();
 
-		*dynamic_cast<SubgraphCount*>(subgraphs) = get_vector_sum(std::execution::par, all_subgraphs.begin(), all_subgraphs.end(), SubgraphCount());
+		*dynamic_cast<SubgraphCount*>(subgraphs) = get_vector_sum(all_subgraphs.begin(), all_subgraphs.end(), SubgraphCount());
 
 	} // end method enumerate
 };

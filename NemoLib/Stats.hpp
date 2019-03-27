@@ -4,15 +4,12 @@
 
 #include "Config.hpp"
 #include "graph64.hpp"
+#include "Utility.hpp"
 #include <unordered_map>	// unordered_map
 #include <vector>			// vector
-#include <numeric>			// reduce, accumulate
 #include <cmath>			// pow
 #include <iostream>			// ostream
-
-#if _C17_EXECUTION_AVAILABLE
-#include <execution>
-#endif
+#include <algorithm>
 
 namespace Statistical_Analysis
 {
@@ -177,13 +174,9 @@ namespace Statistical_Analysis
 	///</returns>
 	double calcRandStdDev(graph64 label, double randMean, stats_data& data)
 	{
-#if _C17_EXECUTION_AVAILABLE
-		double variance = std::reduce(std::execution::par_unseq, (*(data.randomGraphRelFreqs))[label].begin(), (*(data.randomGraphRelFreqs))[label].end(), 0.0,
+		double variance = get_vector_sum((*(data.randomGraphRelFreqs))[label].begin(), (*(data.randomGraphRelFreqs))[label].end(), 0.0,
 			[&](auto prev, auto cur) { return prev + std::pow((cur - randMean), 2); });
-#else
-		double variance = std::accumulate((*(data.randomGraphRelFreqs))[label].begin(), (*(data.randomGraphRelFreqs))[label].end(), 0.0,
-			[&](auto prev, auto cur) { return prev + std::pow((cur - randMean), 2); });
-#endif
+
 		return std::sqrt(variance / (data.randGraphCount - 1));
 	} // end method calcRandStdDev
 
@@ -200,11 +193,7 @@ namespace Statistical_Analysis
 	{
 		std::vector<double>* relFreqs = &(*(data.randomGraphRelFreqs))[label];
 
-#if _C17_EXECUTION_AVAILABLE
-		double total = std::reduce(std::execution::par_unseq, relFreqs->begin(), relFreqs->end(), 0.0, [&](auto prev, auto cur) {return prev + cur; });
-#else
-		double total = std::accumulate(relFreqs->begin(), relFreqs->end(), 0.0);
-#endif
+		double total = get_vector_sum(relFreqs->begin(), relFreqs->end(), 0.0);
 
 		return (total / static_cast<double>(relFreqs->size()));
 	} // end method calcRandMean

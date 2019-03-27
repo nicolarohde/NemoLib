@@ -4,7 +4,7 @@
 	#define __NEMO_CONFIG
 
 	#ifndef _USE_THREAD_POOL
-		#define _USE_THREAD_POOL 0	// use ThreadPool class for parallelization
+		#define _USE_THREAD_POOL 1	// use ThreadPool class for parallelization
 	#endif
 
 	#ifndef _USE_CUDA

@@ -22,6 +22,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <algorithm>
 #include "graph64.hpp"
 
 // using-statements pollute the files that include this header
@@ -41,7 +42,7 @@ public:
 	virtual ~Subgraph() = default;
 
 
-	// Regular copy mechanism 
+	// Regular copy mechanism
 	Subgraph(const Subgraph& OTHER)
 	{
 		*this = OTHER;
@@ -56,7 +57,7 @@ public:
 	} // end Move Constructor
 
 
-	// Regular copy mechanism 
+	// Regular copy mechanism
 	Subgraph& operator=(const Subgraph& OTHER)
 	{
 		order = OTHER.order;
@@ -110,7 +111,7 @@ public:
 
 	// to avoid signed -> unsigned truncation errors,
 	// we cannot return a sentinel value in this function
-	inline vertex get(std::size_t n) const 
+	inline vertex get(std::size_t n) const
 	{
 		return nodes[n];
 	} // end method get
@@ -125,7 +126,7 @@ public:
 	// to avoid signed -> unsigned truncation errors,
 	// we cannot return a sentinel value in this function
 	// get the first vertex id added to this subgraph
-	inline vertex root(void) const 
+	inline vertex root(void) const
 	{
 		return nodes[0];
 	} // end method root
@@ -161,7 +162,7 @@ private:
 
 inline std::ostream& operator<<(std::ostream& out, const Subgraph& sgraph)
 {
-	if (sgraph.nodes.size() < 1) 
+	if (sgraph.nodes.size() < 1)
 	{
 		out << "empty";
 	}
@@ -174,11 +175,10 @@ inline std::ostream& operator<<(std::ostream& out, const Subgraph& sgraph)
 			out << std::to_string(sgraph.nodes[i]) << ",";
 		}
 
-		out << std::to_string(sgraph.nodes[sgraph.nodes.size() - 1]) << "]";	
+		out << std::to_string(sgraph.nodes[sgraph.nodes.size() - 1]) << "]";
 	}
 
 	return out;
 }
 
-#endif 
-
+#endif

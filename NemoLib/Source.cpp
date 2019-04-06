@@ -107,8 +107,8 @@ int main(int argc, char** argv)
 
 	cout << endl << data << endl;
 
-	cout << "Time = " << chrono_duration<milliseconds>(begin, end) << " milliseconds." << endl;
-	cout << "Time = " << chrono_duration<seconds>(begin, end) << " seconds." << endl;
+	cout << "Time = " << chrono_duration<milliseconds, decltype(begin)>(begin, end) << " milliseconds." << endl;
+	cout << "Time = " << chrono_duration<seconds, decltype(begin)>(begin, end) << " seconds." << endl;
 
 	return (EXIT_SUCCESS);
 }

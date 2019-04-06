@@ -1,7 +1,7 @@
 #pragma once
 
-#ifndef __UTILITY__HPP__
-#define __UTILITY__HPP__
+#ifndef __UTIL_HPP
+#define __UTIL_HPP
 
 #include <random>
 #include <numeric>

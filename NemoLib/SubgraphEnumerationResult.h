@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-/* 
+/*
  * File:   SubgraphEnumerationREsult.h
  * Author: Wooyoung
  *
@@ -15,11 +15,16 @@
 #define SUBGRAPHENUMERATIONRESULT_H
 /*This class is an interface class*/
 #include "Config.hpp"
-#include "Subgraph.h"
-#include "NautyLink.h"
+//#include "Subgraph.hpp"
+//#include "NautyLink.h"
 #include <unordered_map>
+#include "graph64.hpp"
 
-class SubgraphEnumerationResult 
+// forward declare types for references below
+class Subgraph;
+class NautyLink;
+
+class SubgraphEnumerationResult
 {
 public:
     /**
@@ -28,7 +33,7 @@ public:
 	 * SubgraphEnumerationResult
 	 */
     virtual void add(Subgraph&, NautyLink&) = 0;
-    
+
     /**
 	 * Calculates and returns a map of relative frequencies or concentrations
 	 * of labels in this subgraph.
@@ -38,4 +43,3 @@ public:
 };
 
 #endif /* SUBGRAPHENUMERATIONRESULT_H */
-

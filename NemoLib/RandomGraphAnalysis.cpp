@@ -20,7 +20,8 @@
    */
 
 #include "RandomGraphAnalysis.h"
-#include "SubgraphCount.h"
+#include "SubgraphCount.hpp"
+#include "Graph.h"
 #include "RandomGraphGenerator.h"
 #include "RandESU.h"
 using std::vector;
@@ -42,7 +43,7 @@ unordered_map <graph64, vector<double>> RandomGraphAnalysis::analyze(Graph& targ
 {
 	// create the return map and fill it with the labels we found in the
 	// target graph, as those are the only labels about which we care
-	// TODO consider changing this, as it creates the precondition of 
+	// TODO consider changing this, as it creates the precondition of
 	// executing the target graph analysis first
 	unordered_map<graph64, vector<double>> labelRelFreqsMap;
 	for (int i = 0; i < randomGraphCount; i++)
@@ -82,4 +83,3 @@ unordered_map <graph64, vector<double>> RandomGraphAnalysis::analyze(Graph& targ
 
 	return labelRelFreqsMap;
 }
-

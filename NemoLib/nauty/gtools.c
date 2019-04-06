@@ -123,7 +123,7 @@ opengraphfile(char *filename, int *codetype, int assumefixed, long position)
             is_pipe = TRUE;
         }
         else
-            fopen_s(&f, filename,"r");
+            f = fopen(filename, "r");
 
         if (f == NULL)
         {

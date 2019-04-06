@@ -17,6 +17,10 @@
 #include "Config.hpp"
 #include "SubgraphEnumerationResult.h"
 #include "Utility.hpp"
+#include "graph64.hpp"
+
+class Subgraph;
+class NautyLink;
 
 // The primary structure of a subgraph profile. Essentially a table to map
 	// labels(String) and nodes(Integer) to the frequency of subgraphs

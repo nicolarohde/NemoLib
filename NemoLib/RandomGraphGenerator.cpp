@@ -12,13 +12,8 @@
   */
 
 #include "RandomGraphGenerator.h"	// class header
-#include "Utility.hpp"				// RNG_provider, get_random_in_range
-#include <random>					// shuffle
-#include <numeric>					// reduce
-
-#if _C17_EXECUTION_AVAILABLE
-#include <execution>
-#endif
+#include "Utility.hpp"						// RNG_provider, get_random_in_range, get_vector_sum
+#include <algorithm>							// shuffle
 
 using std::shuffle;
 using std::vector;
@@ -31,7 +26,7 @@ Graph RandomGraphGenerator::generate(Graph& inputGraph)
 	Graph randomGraph(inputGraph.isDirected());
 
 	// reserve memory for all vertices
-	vertexList.reserve(std::reduce(std::execution::par_unseq, degreeSeq.begin(), degreeSeq.end(), 0));
+	vertexList.reserve(get_vector_sum(degreeSeq.begin(), degreeSeq.end()));
 
 	// generate randomized list of vertices
 	// the vertexList is a set where each node is represented by a number
@@ -95,7 +90,7 @@ Graph RandomGraphGenerator::generate(Graph& inputGraph, const vector <int>& prob
 	vector <int> vertexList;
 	Graph randomGraph(inputGraph.isDirected());
 
-	vertexList.reserve(std::reduce(std::execution::par_unseq, degreeSeq.begin(), degreeSeq.end(), 0));
+	vertexList.reserve(get_vector_sum(degreeSeq.begin(), degreeSeq.end(), 0, [&](auto x, auto y){return x+y;}));
 
 	// generate randomized list of vertices
 	// the vertexList is a set where each node is represented by a number
@@ -164,11 +159,11 @@ Graph RandomGraphGenerator::generate(Graph& inputGraph, const vector <int>& prob
  * vector
  * @return a List representing the degree sequence vector
  */
-vector<int> RandomGraphGenerator::getDegreeSequenceVector(Graph& inputGraph) 
+vector<int> RandomGraphGenerator::getDegreeSequenceVector(Graph& inputGraph)
 {
 	vector <int> degreeSequenceVector(inputGraph.getSize(), 0);
 
-	for (int currentVertex = 0; currentVertex < inputGraph.getSize(); currentVertex++) 
+	for (int currentVertex = 0; currentVertex < inputGraph.getSize(); currentVertex++)
 	{
 		degreeSequenceVector[currentVertex] = inputGraph.getAdjacencyList(currentVertex).size();
 	}

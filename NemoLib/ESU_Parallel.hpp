@@ -14,14 +14,14 @@
   * Created on October 25, 2017, 1:06 PM
   */
 #include "Config.hpp"
+#include "Utility.hpp"
 #include "RandESU.h"
 #include "ThreadPool.hpp"	// ThreadPool
 #include "Job.hpp"			// Job
-#include <numeric>			// reduce
-#include <functional>
-#include "SubgraphCount.h"
+#include "SubgraphCount.hpp"
 #include <mutex>
-#include "Global.hpp"
+#include <functional>
+//#include "Global.hpp"
 
 
   /**
@@ -58,12 +58,8 @@ namespace ESU_Parallel
 		} // end for i
 
 		my_pool->Synchronize();
-	
-		#if _C17_EXECUTION_AVAILABLE
-			*dynamic_cast<SubgraphCount*>(subgraphs) = std::reduce(std::execution::par, all_subgraphs.begin(), all_subgraphs.end(), SubgraphCount());
-		#else
-			*dynamic_cast<SubgraphCount*>(subgraphs) = std::accumulate(all_subgraphs.begin(), all_subgraphs.end(), SubgraphCount());
-		#endif
-		
+
+		*dynamic_cast<SubgraphCount*>(subgraphs) = get_vector_sum(all_subgraphs.begin(), all_subgraphs.end(), SubgraphCount());
+
 	} // end method enumerate
 };

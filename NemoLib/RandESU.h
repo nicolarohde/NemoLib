@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-/* 
+/*
  * File:   RandESU.h
  * Author: Wooyoung
  *
@@ -21,18 +21,18 @@
 
 #include "Config.hpp"
 #include "Graph.h"						// Graph
-#include "Subgraph.h"					// Subgraph
+#include "Subgraph.hpp"					// Subgraph
 #include "NautyLink.h"					// NautyLink
 #include "SubgraphEnumerationResult.h"	// SubgraphEnumerationResult
 #include "Utility.hpp"					// get_random_in_range
 #include <vector>						// vector
 #include <cassert>						// assert
 
-class RandESU 
+class RandESU
 {
 public:
     /**
-	 * Enumerates all subgraphSize Subgraphs in the input Graph using the 
+	 * Enumerates all subgraphSize Subgraphs in the input Graph using the
 	 * RAND-ESU algorithm.
 	 *
 	 * @param graph           the graph on which to execute RAND-ESU
@@ -52,45 +52,44 @@ public:
      * @param nuatylink
 	 */
     static void enumerate(Graph&, SubgraphEnumerationResult*, int, const std::vector<double>&, vertex, NautyLink&);
-    
-    
-        
+
+
+
 private:
-    
+
     /** determines whether or not to extend based on a given probability, given
 	 as an integer.
 	 precondition: 0.0 <= prob <= 1.0
     **/
     static bool shouldExtend(double prob)
-	{
-		assert(prob >= 0.0 && prob <= 1.0);
+  	{
+  		assert(prob >= 0.0 && prob <= 1.0);
 
-		return prob == 1.0 ? true : prob == 0.0 ? false : get_random_in_range(0, 100) <= (prob * 100.0);
-	} // end method shouldExtend
-    
+  		return prob == 1.0 ? true : prob == 0.0 ? false : get_random_in_range(0, 100) <= (prob * 100.0);
+  	} // end method shouldExtend
+
     /** returns true if the node index is exclusive to the given subgraph
 	 (that is, is not already in the subgraph, and is not adjacent to any of
 	  the nodes in the subgraph)
      **/
     static bool isExclusive(Graph& graph, vertex node, Subgraph& subgraph)
-	{
-		for (auto& element : subgraph)
-		{
-			if (element == node || graph.getAdjacencyList(element).count(node) > 0)
-			{
-				return false;
-			} // end if
-		} // end for element
+  	{
+  		for (auto& element : subgraph)
+  		{
+  			if (element == node || graph.getAdjacencyList(element).count(node) > 0)
+  			{
+  				return false;
+  			} // end if
+  		} // end for element
 
-		return true;
-	} // end method isExclusive
-    
-    /** extend the subgraphs recursively    
+  		return true;
+  	} // end method isExclusive
+
+    /** extend the subgraphs recursively
      **/
     static void extend(Graph&, Subgraph&, std::vector<vertex>, const std::vector<double>&, SubgraphEnumerationResult*, NautyLink&);
- 
+
 
 };
 
 #endif /* RANDESU_H */
-

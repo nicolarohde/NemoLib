@@ -1,4 +1,3 @@
-
 To compile:
 	You must use Visual Studio 2017 on Windows 10 to compile this library, no other build system 
 	and OS are currently supported. 

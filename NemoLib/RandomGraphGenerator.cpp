@@ -22,7 +22,7 @@ using std::vector;
 Graph RandomGraphGenerator::generate(Graph& inputGraph)
 {
 	vector<int> degreeSeq = std::move(getDegreeSequenceVector(inputGraph));
-	vector<int> vertexList;
+	vector<vertex> vertexList;
 	Graph randomGraph(inputGraph.isDirected());
 
 	// reserve memory for all vertices
@@ -31,12 +31,12 @@ Graph RandomGraphGenerator::generate(Graph& inputGraph)
 	// generate randomized list of vertices
 	// the vertexList is a set where each node is represented by a number
 	// of elements equal to that vertex's degree
-	for (int vertex = 0; vertex < inputGraph.getSize(); vertex++)
+	for (vertex vert = 0; vert < inputGraph.getSize(); vert++)
 	{
 		randomGraph.addVertex();
-		for (int degree = 0; degree < degreeSeq[vertex]; degree++)
+		for (int degree = 0; degree < degreeSeq[vert]; degree++)
 		{
-			vertexList.push_back(vertex);
+			vertexList.push_back(vert);
 		} // end for degree
 	} // end for vertex
 
@@ -45,8 +45,8 @@ Graph RandomGraphGenerator::generate(Graph& inputGraph)
 	// create edges
 	while (!vertexList.empty())
 	{
-		std::size_t u = get_random_in_range<std::size_t>(0, vertexList.size() - 1);
-		std::size_t v = get_random_in_range<std::size_t>(0, vertexList.size() - 1);
+		std::size_t u = get_random_in_range<std::size_t>(0ULL, vertexList.size() - 1ULL);
+		std::size_t v = get_random_in_range<std::size_t>(0ULL, vertexList.size() - 1ULL);
 
 		// this avoids looping for a long time when only a few values
 		// the first case will not work if u = v = vertexList.size() - 1
@@ -54,13 +54,13 @@ Graph RandomGraphGenerator::generate(Graph& inputGraph)
 		// we force these two cases into the other case
 		if (u == v)
 		{
-			if ((get_random_in_range<std::size_t>(0, 1) % 2 == 0 && u < (vertexList.size() - 1)) || v == 0)
+			if ((get_random_in_range<std::size_t>(0ULL, 1ULL) % 2ULL == 0ULL && u < (vertexList.size() - 1ULL)) || v == 0ULL)
 			{
-				v = get_random_in_range<std::size_t>(u + 1, vertexList.size() - 1);
+				v = get_random_in_range<std::size_t>(u + 1ULL, vertexList.size() - 1ULL);
 			} // end if
 			else
 			{
-				u = get_random_in_range<std::size_t>(0, v - 1);
+				u = get_random_in_range<std::size_t>(0ULL, v - 1ULL);
 			} // end if
 		} // end else
 
@@ -69,8 +69,8 @@ Graph RandomGraphGenerator::generate(Graph& inputGraph)
 			std::swap(u, v);
 		} // end if
 
-		std::size_t edgeVertexV = vertexList[v];
-		std::size_t edgeVertexU = vertexList[u];
+		vertex edgeVertexV = vertexList[v];
+		vertex edgeVertexU = vertexList[u];
 
 		vertexList.erase(vertexList.begin() + v);
 		vertexList.erase(vertexList.begin() + u);
@@ -87,7 +87,7 @@ Graph RandomGraphGenerator::generate(Graph& inputGraph)
 Graph RandomGraphGenerator::generate(Graph& inputGraph, const vector <int>& probs)
 {
 	vector<int> degreeSeq = std::move(getDegreeSequenceVector(inputGraph));
-	vector <int> vertexList;
+	vector<int> vertexList;
 	Graph randomGraph(inputGraph.isDirected());
 
 	vertexList.reserve(get_vector_sum(degreeSeq.begin(), degreeSeq.end(), 0, [&](auto x, auto y){return x+y;}));
@@ -95,12 +95,12 @@ Graph RandomGraphGenerator::generate(Graph& inputGraph, const vector <int>& prob
 	// generate randomized list of vertices
 	// the vertexList is a set where each node is represented by a number
 	// of elements equal to that vertex's degree
-	for (int vertex = 0; vertex < inputGraph.getSize(); vertex++)
+	for (int vert = 0; vert < inputGraph.getSize(); vert++)
 	{
 		randomGraph.addVertex();
-		for (int degree = 0; degree < degreeSeq[vertex]; degree++)
+		for (int degree = 0; degree < degreeSeq[vert]; degree++)
 		{
-			vertexList.push_back(vertex);
+			vertexList.push_back(vert);
 		}
 	}
 
@@ -165,7 +165,7 @@ vector<int> RandomGraphGenerator::getDegreeSequenceVector(Graph& inputGraph)
 
 	for (int currentVertex = 0; currentVertex < inputGraph.getSize(); currentVertex++)
 	{
-		degreeSequenceVector[currentVertex] = inputGraph.getAdjacencyList(currentVertex).size();
+		degreeSequenceVector[currentVertex] = static_cast<int>(inputGraph.getAdjacencyList(currentVertex).size());
 	}
 
 	return degreeSequenceVector;

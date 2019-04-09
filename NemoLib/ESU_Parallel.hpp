@@ -19,9 +19,7 @@
 #include "ThreadPool.hpp"	// ThreadPool
 #include "Job.hpp"			// Job
 #include "SubgraphCount.hpp"
-#include <mutex>
 #include <functional>
-//#include "Global.hpp"
 
 
   /**
@@ -53,7 +51,7 @@ namespace ESU_Parallel
 		{
 			all_subgraphs.push_back(*dynamic_cast<SubgraphCount*>(subgraphs));
 			std::vector<double> probs(subgraphSize, 1.0);
-			Job_Base* j = new enum_job(rand_esu, graph, &all_subgraphs[i], subgraphSize, probs, i, nautylink);
+			Job_Base* j = new enum_job(rand_esu, graph, &all_subgraphs[i], subgraphSize, probs, static_cast<vertex>(i), nautylink);
 			my_pool->Add_Job(j);
 		} // end for i
 

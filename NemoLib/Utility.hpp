@@ -3,14 +3,11 @@
 #ifndef __UTIL_HPP
 #define __UTIL_HPP
 
+#include "Config.hpp"
 #include <random>
 #include <numeric>
 #include <chrono>
 #include <cmath>
-
-#if _C17_EXECUTION_AVAILABLE
-	#include <execution>
-#endif
 
 #ifndef _min
 #define _min(a,b) (a > b ? b : a)
@@ -19,7 +16,6 @@
 #ifndef _max
 #define _max(a,b) (a > b ? a : b)
 #endif
-
 
 
 // Typedefs to make the clock and timepoint names shorter
@@ -31,7 +27,7 @@ inline std::mt19937& RNG_provider(void)
 	static std::mt19937 rng{rd()};
 
 	return rng;
-}
+} // end method RNG_provider
 
 
 template<typename T>
@@ -52,7 +48,8 @@ inline T get_vector_sum(Iter begin, Iter end, T initial = 0)
 	#else
 		return std::accumulate(begin, end, initial);
 	#endif
-}
+} // end template get_vector_sum
+
 
 template <typename Iter, typename T, typename F>
 inline T get_vector_sum(Iter begin, Iter end, T initial = 0, F lambda = std::plus<T>())
@@ -62,14 +59,14 @@ inline T get_vector_sum(Iter begin, Iter end, T initial = 0, F lambda = std::plu
 	#else
 		return std::accumulate(begin, end, initial, lambda);
 	#endif
-}
+} // end template get_vector_sum
 
 
 template <typename D, typename T>
 inline double chrono_duration(T start, T end)
 {
-	return std::chrono::duration_cast<D>(end - start).count();
-}
+	return static_cast<double>(std::chrono::duration_cast<D>(end - start).count());
+} // end template chrono_duration
 
 
 #endif

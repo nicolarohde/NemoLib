@@ -45,11 +45,11 @@ void RandESU::enumerate(Graph& graph, SubgraphEnumerationResult* subgraphs, int 
 
         for (auto& current : selectedVertices) 
 		{
-            vertex nodeSelected = get_random_in_range<vertex>(0, graph.getSize() - 1); // get the node id
+            vertex nodeSelected = get_random_in_range<vertex>(0, static_cast<vertex>(graph.getSize() - 1)); // get the node id
 
 			while (seen.count(nodeSelected) > 0)
 			{
-				nodeSelected = get_random_in_range<vertex>(0, graph.getSize() - 1);
+				nodeSelected = get_random_in_range<vertex>(0, static_cast<vertex>(graph.getSize() - 1));
 			} // end while
 
 			seen.insert(nodeSelected);

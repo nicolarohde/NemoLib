@@ -54,7 +54,7 @@ unordered_map<graph64, uint64_t> SubgraphProfile::getlabelFreqMap(int subgraphsi
 
 	for (auto& p : labelVertexFreqMapMap)
 	{
-		uint64_t countLabel = get_vector_sum(p.second.begin(), p.second.end(), 0);
+		uint64_t countLabel = get_vector_sum(p.second.begin(), p.second.end(), uint64_t{0});
 		labelFreqMap[p.first] = countLabel / subgraphsize;
 	}
 	return labelFreqMap;
@@ -67,7 +67,7 @@ unordered_map <graph64, double> SubgraphProfile::getRelativeFrequencies()
 
 	for (auto& p : labelVertexFreqMapMap)
 	{
-		double countLabel = get_vector_sum(p.second.begin(), p.second.end(), 0.0);
+		double countLabel = get_vector_sum(p.second.begin(), p.second.end(), double{0.0});
 		result[p.first] = countLabel / totalcount;
 	}
 

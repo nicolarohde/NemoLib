@@ -123,7 +123,11 @@ opengraphfile(char *filename, int *codetype, int assumefixed, long position)
             is_pipe = TRUE;
         }
         else
+			#if !defined(_WIN32) && !defined(_WIN64)
             f = fopen(filename, "r");
+			#else
+			fopen_s(&f, filename,"r")
+			#endif
 
         if (f == NULL)
         {

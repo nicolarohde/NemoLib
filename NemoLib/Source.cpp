@@ -83,9 +83,9 @@ int main(int argc, char** argv)
 	Graph targetg(filename, false);
 
 #if _USE_THREAD_POOL
-	ESU_Parallel::enumerate(targetg, dynamic_cast<SubgraphEnumerationResult*>(&subc), motifSize, &my_pool);
+	ESU_Parallel::enumerate(targetg, dynamic_cast<SubgraphEnumerationResult*>(&subc), static_cast<int>(motifSize), &my_pool);
 #else
-	ESU::enumerate(targetg, dynamic_cast<SubgraphEnumerationResult*>(&subc), motifSize);
+	ESU::enumerate(targetg, dynamic_cast<SubgraphEnumerationResult*>(&subc), static_cast<int>(motifSize));
 #endif
 	unordered_map<graph64, double> targetLabelRelFreqMap(std::move(subc.getRelativeFrequencies()));
 

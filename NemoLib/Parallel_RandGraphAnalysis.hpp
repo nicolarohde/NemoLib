@@ -109,7 +109,7 @@ namespace Parallel_Analysis
 			//generate random graphs
 			Graph randomGraph = std::move(RandomGraphGenerator::generate(targetGraph));
 
-			Job_Base* j = new enum_job(rand_esu, randomGraph, &all_subgraphs[i], subgraphSize, probs);
+			Job_Base* j = new enum_job(rand_esu, randomGraph, &all_subgraphs[i], static_cast<int>(subgraphSize), probs);
 
 			my_pool->Add_Job(j);
 		}

@@ -1,0 +1,34 @@
+RP tools:
+  CLEVER          -- dx.doi.org/10.1093/bioinformatics/bts566
+  BreakDancer     -- dx.doi.org/10.1038/nmeth.1363
+  VariationHunter -- dx.doi.org/10.1093/bioinformatics/btq216
+  PEMer           -- dx.doi.org/10.1186/gb-2009-10-2-r23
+  MoDIL           -- dx.doi.org/10.1038/nmeth.f.256
+
+SR tools:
+  Gustaf          -- dx.doi.org/10.1093/bioinformatics/btu431
+  Socrates        -- dx.doi.org/10.1093/bioinformatics/btt767
+  Splitread       -- dx.doi.org/10.1038/nmeth.1810
+
+RP+SR tools:
+  Pindel          -- dx.doi.org/10.1093/bioinformatics/btp394
+  LUMPY           -- dx.doi.org/10.1186/gb-2014-15-6-r84
+  DELLY           -- dx.doi.org/10.1093/bioinformatics/bts378
+  PRISM           -- dx.doi.org/10.1093/bioinformatics/bts484
+  MATE-CLEVER     -- dx.doi.org/10.1093/bioinformatics/btt556
+  SoftSearch      -- dx.doi.org/10.1371/journal.pone.0083356
+
+RP+SR+RC tools:
+  Genome STRiP    -- dx.doi.org/10.1038/ng.768
+
+
+Sim tools:
+  Overview -- https://www-nature-com.offcampus.lib.washington.edu/articles/nrg.2016.57
+  RSVSim   -- https://academic.oup.com/bioinformatics/article/29/13/1679/185706
+
+Refs:
+  Schroder -- http://dx.doi.org/10.1093/bioinformatics/btt767
+  Earl     -- http://dx.doi.org/10.1101/gr.126599.111
+  Wong     -- http://dx.doi.org/10.1186/gb-2010-11-12-r128
+  Lam      -- http://dx.doi.org/10.1038/nbt.2134
+  Mimori   -- http://dx.doi.org/10.1186/1752-0509-7-S6-S8

@@ -61,7 +61,7 @@ int main(int argc, char** argv)
 		return 0;
 	} // end if
 
-	const string filename = argc > 1 ? argv[1] : "exampleGraph.txt";
+	const string filename = argc > 1 ? argv[1] : "./test/exampleGraph.txt";
 	const std::size_t n_threads = argc > 2 ? atoi(argv[2]) : 16;
 	const std::size_t motifSize = argc > 3 ? atoi(argv[3]) : 4;
 	const std::size_t randomCount = argc > 4 ? atoi(argv[4]) : 1000;

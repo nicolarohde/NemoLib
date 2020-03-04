@@ -18,13 +18,13 @@
 	#define MAXN 64
 #endif
 
+#include <unordered_map>
 
 #include "Config.hpp"
 #include "graph64.hpp"
 #include "Subgraph.hpp"
-#include "nauty/nautinv.h"
-#include "nauty/nauty.h"
-#include <unordered_map>
+#include "nautinv.h"
+#include "nauty.h"
 
 
 typedef uint64_t graph64; //Nauty label

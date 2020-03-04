@@ -17,7 +17,6 @@
 #include "Utility.hpp"
 #include "RandESU.h"
 #include "ThreadPool.hpp"	// ThreadPool
-#include "Job.hpp"			// Job
 #include "SubgraphCount.hpp"
 #include <functional>
 
@@ -39,9 +38,6 @@ namespace ESU_Parallel
 	  */
 	static void enumerate(Graph& graph, SubgraphEnumerationResult* subgraphs, int subgraphSize, ThreadPool* my_pool)
 	{
-		using enum_job = Job<void, Graph&, SubgraphEnumerationResult*, int, const std::vector<double>&, vertex, NautyLink&>;
-		void(*rand_esu)(Graph&, SubgraphEnumerationResult*, int, const std::vector<double>&, vertex, NautyLink&) = RandESU::enumerate;
-
 		NautyLink nautylink(subgraphSize, graph.getEdges(), graph.isDirected());
 
 		std::vector<SubgraphCount> all_subgraphs;
@@ -50,9 +46,21 @@ namespace ESU_Parallel
 		for (std::size_t i = 0; i < graph.getSize(); i++)
 		{
 			all_subgraphs.push_back(*dynamic_cast<SubgraphCount*>(subgraphs));
-			std::vector<double> probs(subgraphSize, 1.0);
-			Job_Base* j = new enum_job(rand_esu, graph, &all_subgraphs[i], subgraphSize, probs, static_cast<vertex>(i), nautylink);
-			my_pool->Add_Job(j);
+
+			int my_size = subgraphSize;
+			vertex my_vertex = static_cast<vertex>(i);
+
+			my_pool->Add_Job(
+				[&graph, &all_subgraphs, i, my_size, my_vertex, &nautylink](void)
+				{
+					const std::vector<double> probs(my_size, 1.0);
+					Graph& my_graph = graph;
+					SubgraphEnumerationResult* my_result = &all_subgraphs[i];
+					NautyLink& my_link = nautylink;
+					//enumerate(Graph&, SubgraphEnumerationResult*, int, const std::vector<double>&, vertex, NautyLink&);
+					RandESU::enumerate(my_graph, my_result, my_size, probs, my_vertex, my_link);
+				} // end lambda
+			); // end Add_Job
 		} // end for i
 
 		my_pool->Synchronize();

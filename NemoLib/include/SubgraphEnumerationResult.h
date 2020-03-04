@@ -14,10 +14,10 @@
 #ifndef SUBGRAPHENUMERATIONRESULT_H
 #define SUBGRAPHENUMERATIONRESULT_H
 /*This class is an interface class*/
-#include "Config.hpp"
-//#include "Subgraph.hpp"
-//#include "NautyLink.h"
+
 #include <unordered_map>
+
+#include "Config.hpp"
 #include "graph64.hpp"
 
 // forward declare types for references below

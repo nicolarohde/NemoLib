@@ -2,8 +2,12 @@
 *.vcxproj
 *.vcxproj.*
 .vs/
+.vscode/
+build/
 Debug/
 x64/
+release/
+debug/
 Release/
 *.aps
 rand_graph/

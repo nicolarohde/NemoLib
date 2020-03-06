@@ -8,7 +8,7 @@
  * Created on October 12, 2017, 1:51 PM
  */
 
-#include "Graph.h"		// class header
+#include "Graph.hpp"		// class header
 #include <sstream>		// stringstream
 #include <algorithm>	// shuffle
 #include <fstream>		// ifstream

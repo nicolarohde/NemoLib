@@ -13,6 +13,7 @@
 #include <vector>
 #include <functional>
 #include <unordered_map>
+#include <iostream>
 #include <stdio.h>
 
 class LabelGProvider

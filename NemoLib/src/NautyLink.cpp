@@ -18,7 +18,7 @@
 #include <string>
 
 #include "Global.hpp"
-#include "NautyLink.h"
+#include "NautyLink.hpp"
 
 
 std::string NautyLink::nautylabel_helper(Subgraph& subgraph)
@@ -32,7 +32,7 @@ std::string NautyLink::nautylabel_helper(Subgraph& subgraph)
 
 	char** adj_matrix = new char*[subsize];
 
-	for (auto i = 0; i < subsize; i++)
+	for (std::size_t i{0}; i < subsize; i++)
 	{
 		adj_matrix[i] = new char[subsize];
 		memset(adj_matrix[i], 0, subsize);
@@ -65,9 +65,9 @@ std::string NautyLink::nautylabel_helper(Subgraph& subgraph)
 	// each 6 bits belong to a character
 	int counter = 0;
 
-	for (auto i = 0; i < subsize; i++)
+	for (std::size_t i{0}; i < subsize; i++)
 	{
-		for (auto j = directed ? 0 : i+1; j < subsize; j++)
+		for (auto j = directed ? std::size_t {0} : std::size_t {i+1}; j < subsize; j++)
 		{
 			if (adj_matrix[i][j] == '1')
 			{
@@ -101,7 +101,7 @@ std::string NautyLink::nautylabel_helper(Subgraph& subgraph)
 
 	//std::cerr << "Waiting for label, deleting memory ..." << std::endl;
 
-	for (auto i = 0; i < subsize; i++)
+	for (std::size_t i{0}; i < subsize; i++)
 	{
 		delete[] adj_matrix[i];
 	}

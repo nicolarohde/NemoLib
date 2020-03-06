@@ -27,6 +27,12 @@ class NautyLink;
 class SubgraphEnumerationResult
 {
 public:
+
+	/**
+	 * Virtual destructor to make the compiler happy.
+	 */
+	virtual ~SubgraphEnumerationResult(void) = default;
+
     /**
 	 * Adds a Subgraph to this SubgraphEnumerationResult
 	 * @param currentSubgraph a Subgraph to add to this

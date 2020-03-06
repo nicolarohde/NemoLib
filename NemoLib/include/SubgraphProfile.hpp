@@ -15,7 +15,7 @@
 #define SUBGRAPHPROFILE_H
 
 #include "Config.hpp"
-#include "SubgraphEnumerationResult.h"
+#include "SubgraphEnumerationResult.hpp"
 #include "Utility.hpp"
 #include "graph64.hpp"
 

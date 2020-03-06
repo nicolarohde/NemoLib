@@ -35,7 +35,7 @@ public:
 	friend std::ostream& operator<< (std::ostream&, const Subgraph&);
 
 	// Constructor initializes class members
-	Subgraph(std::size_t _order) : order(_order), current(0), nodes(_order, 0) {}
+	Subgraph(std::size_t _order) : nodes(_order, 0), order(_order), current(0) {}
 
 
 	// compiler generated destructor will work for this class

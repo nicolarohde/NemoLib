@@ -14,10 +14,10 @@
 #ifndef SUBGRAPHCOUNT_H
 #define SUBGRAPHCOUNT_H
 #include "Config.hpp"
-#include "SubgraphEnumerationResult.h"
+#include "SubgraphEnumerationResult.hpp"
 #include "graph64.hpp"
 #include "Subgraph.hpp"
-#include "NautyLink.h"
+#include "NautyLink.hpp"
 
   /**
    * Representation of a Subgraph Count structure, which stores the number of

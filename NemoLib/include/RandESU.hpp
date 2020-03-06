@@ -20,10 +20,10 @@
 #define RANDESU_H
 
 #include "Config.hpp"
-#include "Graph.h"						// Graph
+#include "Graph.hpp"						// Graph
 #include "Subgraph.hpp"					// Subgraph
-#include "NautyLink.h"					// NautyLink
-#include "SubgraphEnumerationResult.h"	// SubgraphEnumerationResult
+#include "NautyLink.hpp"					// NautyLink
+#include "SubgraphEnumerationResult.hpp"	// SubgraphEnumerationResult
 #include "Utility.hpp"					// get_random_in_range
 #include <vector>						// vector
 #include <cassert>						// assert

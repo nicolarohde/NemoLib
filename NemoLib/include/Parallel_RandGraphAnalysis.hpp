@@ -8,13 +8,13 @@
 #include "Global.hpp"
 #include "graph64.hpp"
 #include "SubgraphCount.hpp"
-#include "RandESU.h"
+#include "RandESU.hpp"
 #include "ThreadPool.hpp"
 
 #if _USE_CUDA
 	#include "CUDA_RandomGraphGenerator.hpp"
 #else
-	#include "RandomGraphGenerator.h"
+	#include "RandomGraphGenerator.hpp"
 #endif
 
 namespace Parallel_Analysis
@@ -103,7 +103,7 @@ namespace Parallel_Analysis
 
 		//std::cout << "Creating jobs for random analysis ..." << std::endl;
 
-		for (int i = 0; i < randomGraphCount; i++)
+		for (std::size_t i{0}; i < randomGraphCount; i++)
 		{
 			my_pool->Add_Job(
 				[&targetGraph, &all_subgraphs, i, subgraphSize, &probs, labelg_path](void) 

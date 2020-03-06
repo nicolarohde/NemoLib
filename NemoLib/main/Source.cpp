@@ -1,8 +1,8 @@
 #include "Config.hpp"
 #include "Utility.hpp"
-#include "Graph.h"
+#include "Graph.hpp"
 #include "SubgraphCount.hpp"
-#include "SubgraphProfile.h"
+#include "SubgraphProfile.hpp"
 #include "Stats.hpp"
 #include <chrono>
 #include <string>
@@ -13,12 +13,10 @@
 	#include "ESU_Parallel.hpp"
 	#include "Parallel_RandGraphAnalysis.hpp"
 #else
-	#include "ESU.h"
-	#include "RandomGraphAnalysis.h"
+	#include "ESU.hpp"
+	#include "RandomGraphAnalysis.hpp"
 #endif
 
-
-//#pragma comment(lib,"NemoLib.lib")		// declare use of nemolib library to linker
 
 using std::unordered_map;
 using std::string;

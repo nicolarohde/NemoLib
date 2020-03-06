@@ -15,7 +15,7 @@
   */
 #include "Config.hpp"
 #include "Utility.hpp"
-#include "RandESU.h"
+#include "RandESU.hpp"
 #include "ThreadPool.hpp"	// ThreadPool
 #include "SubgraphCount.hpp"
 #include <functional>

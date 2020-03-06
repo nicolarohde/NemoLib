@@ -19,11 +19,11 @@
    * network motifs.
    */
 
-#include "RandomGraphAnalysis.h"
+#include "RandomGraphAnalysis.hpp"
 #include "SubgraphCount.hpp"
-#include "Graph.h"
-#include "RandomGraphGenerator.h"
-#include "RandESU.h"
+#include "Graph.hpp"
+#include "RandomGraphGenerator.hpp"
+#include "RandESU.hpp"
 using std::vector;
 using std::unordered_map;
 
@@ -75,7 +75,7 @@ unordered_map <std::string, vector<double>> RandomGraphAnalysis::analyze(Graph& 
 	// ensure non-detection is accounted for.
 	for (auto& p : labelRelFreqsMap)
 	{
-		while (p.second.size() < randomGraphCount)
+		while (p.second.size() < static_cast<std::size_t>(randomGraphCount))
 		{
 			p.second.push_back(0.0);
 		}

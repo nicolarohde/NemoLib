@@ -17,7 +17,7 @@
 #define RANDOMGRAPHGENERATOR_H
 
 #include "Config.hpp"
-#include "Graph.h"
+#include "Graph.hpp"
 
 /**
   * Generates random graphs from an input graph based on the degree sequence of 

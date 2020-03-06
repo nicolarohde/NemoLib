@@ -11,9 +11,9 @@
   * Created on October 29, 2017, 3:05 PM
   */
 
-#include "SubgraphProfile.h"
+#include "SubgraphProfile.hpp"
 #include "Subgraph.hpp"
-#include "NautyLink.h"
+#include "NautyLink.hpp"
 #include "Utility.hpp"
 
 using std::cout;
@@ -28,9 +28,6 @@ using std::unordered_map;
  */
 void SubgraphProfile::add(Subgraph& currentSubgraph, NautyLink& nautylink)
 {
-	std::cerr << "In SubgraphProfile add ..." << std::endl;
-	std::cerr << "Getting cannonical label for subgraph ..." << std::endl;
-
 	// first, get the label
 	std::string label = nautylink.nautylabel_helper(currentSubgraph);
 
@@ -44,7 +41,7 @@ void SubgraphProfile::add(Subgraph& currentSubgraph, NautyLink& nautylink)
 	}
 
 	// update the map
-	for (int i = 0; i < currentSubgraph.getSize(); i++)
+	for (int i = 0; static_cast<std::size_t>(i) < currentSubgraph.getSize(); i++)
 	{
 		labelVertexFreqMapMap[label][nodes[i]] += 1;
 	}

@@ -11,7 +11,7 @@
   * Created on November 2, 2017, 1:23 PM
   */
 
-#include "RandomGraphGenerator.h"	// class header
+#include "RandomGraphGenerator.hpp"	// class header
 #include "Utility.hpp"						// RNG_provider, get_random_in_range, get_vector_sum
 #include <algorithm>							// shuffle
 
@@ -95,7 +95,7 @@ Graph RandomGraphGenerator::generate(Graph& inputGraph, const vector <int>& prob
 	// generate randomized list of vertices
 	// the vertexList is a set where each node is represented by a number
 	// of elements equal to that vertex's degree
-	for (int vert = 0; vert < inputGraph.getSize(); vert++)
+	for (int vert = 0; static_cast<std::size_t>(vert) < inputGraph.getSize(); vert++)
 	{
 		randomGraph.addVertex();
 		for (int degree = 0; degree < degreeSeq[vert]; degree++)
@@ -163,7 +163,7 @@ vector<int> RandomGraphGenerator::getDegreeSequenceVector(Graph& inputGraph)
 {
 	vector <int> degreeSequenceVector(inputGraph.getSize(), 0);
 
-	for (int currentVertex = 0; currentVertex < inputGraph.getSize(); currentVertex++)
+	for (int currentVertex = 0; static_cast<std::size_t>(currentVertex) < inputGraph.getSize(); currentVertex++)
 	{
 		degreeSequenceVector[currentVertex] = static_cast<int>(inputGraph.getAdjacencyList(currentVertex).size());
 	}

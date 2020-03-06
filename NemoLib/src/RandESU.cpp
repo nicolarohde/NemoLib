@@ -11,7 +11,7 @@
  * Created on October 25, 2017, 10:28 AM
  */
 
-#include "RandESU.h"		// class header
+#include "RandESU.hpp"		// class header
 #include "Utility.hpp"		// get_random_in_range
 #include <algorithm>		// copy_if
 #include <numeric>			// iota

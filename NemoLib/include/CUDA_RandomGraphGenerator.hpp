@@ -10,7 +10,7 @@
 #include <vector>							// vector
 #include <cstddef>						// size_t
 #include <thread>							// thread
-#include "Graph.h"						// Graph
+#include "Graph.hpp"						// Graph
 #include "Utility.hpp"				// get_vector_sum
 #include "CUDA_Shuffler.hpp"	// CUDA_Shuffler
 

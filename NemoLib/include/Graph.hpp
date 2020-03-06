@@ -11,8 +11,8 @@
   * Created on October 12, 2017, 1:51 PM
   */
 
-#ifndef GRAPH_H
-#define GRAPH_H
+#ifndef __NEMOLIB_GRAPH_HPP
+#define __NEMOLIB_GRAPH_HPP
 #include "Config.hpp"
 #include <iostream>			// ostream
 #include <stdexcept>		// invalid_argument
@@ -122,7 +122,7 @@ public:
 	inline void addVertices(std::size_t n)
 	{
 		adjacencyLists.reserve(adjacencyLists.size() + n);
-		for (auto i = 0; i < n; i++)
+		for (std::size_t i{0}; i < n; i++)
 		{
 			adjacencyLists.push_back(std::unordered_set<vertex>());
 		}
@@ -132,7 +132,7 @@ public:
 	inline void addEdges(const std::vector<int> EDGES)
 	{
 		edges.reserve(edges.size() + (EDGES.size() / 2));
-		for (auto i = 0; i < EDGES.size(); i += 2)
+		for (std::size_t i{0}; i < EDGES.size(); i += 2)
 		{
 			addEdge(EDGES[i], EDGES[i + 1]);
 		}
@@ -189,5 +189,5 @@ private:
 	vertex getOrCreateIndex(std::string, std::unordered_map<std::string, vertex>&);
 };
 
-#endif /* GRAPH_H */
+#endif /* __NEMOLIB_GRAPH_HPP */
 

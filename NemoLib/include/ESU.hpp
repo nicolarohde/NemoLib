@@ -14,7 +14,7 @@
 #ifndef ESU_H
 #define ESU_H
 #include "Config.hpp"
-#include "RandESU.h"
+#include "RandESU.hpp"
 
 
 /**

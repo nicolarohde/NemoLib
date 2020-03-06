@@ -24,8 +24,6 @@
 #include "Config.hpp"
 #include "graph64.hpp"
 #include "Subgraph.hpp"
-//#include "nautinv.h"
-//#include "nauty.h"
 
 
 typedef uint64_t graph64; //Nauty label
@@ -34,9 +32,8 @@ class NautyLink
 {
 public:
 	NautyLink(const std::string& kr_str_LABELG_PATH_, int subgraphsize, std::unordered_map<edge, edgetype> edgeset, bool dir = false) 
-     : G_N(subgraphsize), directed(dir), edges(edgeset)
+     : directed(dir), G_N(subgraphsize), edges(edgeset)
 	{
-		//nautyinit();
         m_lgp_cannonical_labeler.start_up(kr_str_LABELG_PATH_);
 	}
 

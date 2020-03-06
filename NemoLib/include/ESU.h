@@ -33,9 +33,9 @@ public:
 	 *                  Subgraphs will be stored.
 	 * @param subgraphSize the size of the target Subgraphs
 	 */
-	static void enumerate(Graph& graph, SubgraphEnumerationResult* subgraphs, int subgraphSize)
+	static void enumerate(Graph& graph, SubgraphEnumerationResult* subgraphs, int subgraphSize, const std::string& labelg_path)
 	{
-		NautyLink nautylink(subgraphSize, graph.getEdges(), graph.isDirected());
+		NautyLink nautylink(labelg_path, subgraphSize, graph.getEdges(), graph.isDirected());
 
 		for (std::size_t i = 0; i < graph.getSize(); i++)
 		{

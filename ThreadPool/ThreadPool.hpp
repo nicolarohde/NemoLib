@@ -19,11 +19,11 @@ class ThreadPool
 public:
 	enum THREAD_SIGNALS
 	{
-		STARTING,
-		WORKING,
-		IDLE,
-		SIGTERM,
-		TERMINATING
+		TP_STARTING,
+		TP_WORKING,
+		TP_IDLE,
+		TP_SIGTERM,
+		TP_TERMINATING
 	}; // end enum THREAD_SIGNALS
 
 	// Disallow any kind of copy/move operation on thread pools
@@ -64,7 +64,7 @@ public:
 		std::for_each(m_vect_signals.begin(), m_vect_signals.end(),
 			[&](auto& sigterm)
 			{
-				sigterm = THREAD_SIGNALS::SIGTERM;
+				sigterm = THREAD_SIGNALS::TP_SIGTERM;
 			} // end lambda
 		); // end foreach
 		m_mtx_signals.unlock();
@@ -129,7 +129,7 @@ public:
 			for (auto i = mu_li_nrunning; i < mu_li_nthreads; i++)
 			{
 				std::size_t my_id = i;
-				m_vect_signals.push_back(THREAD_SIGNALS::STARTING);
+				m_vect_signals.push_back(THREAD_SIGNALS::TP_STARTING);
 				m_vect_threads.push_back(std::thread([this, my_id](void) {idle_thread(my_id); }));
 			} // end for i
 
@@ -173,7 +173,7 @@ public:
 		std::for_each(m_vect_signals.begin(), m_vect_signals.end(),
 			[&](auto& sigterm)
 			{
-				sigterm = THREAD_SIGNALS::SIGTERM;
+				sigterm = THREAD_SIGNALS::TP_SIGTERM;
 			} // end lambda
 		); // end foreach
 		m_mtx_signals.unlock();
@@ -230,7 +230,7 @@ public:
 		// wait for all threads to complete their current work
 		for (auto& _signal : m_vect_signals)
 		{
-			while (_signal == THREAD_SIGNALS::WORKING)
+			while (_signal == THREAD_SIGNALS::TP_WORKING)
 			{
 				std::this_thread::yield();
 			} // end while
@@ -338,7 +338,7 @@ protected:
 
 			switch (m_vect_signals.at(ku_li_MY_ID_))
 			{
-			case THREAD_SIGNALS::SIGTERM:
+			case THREAD_SIGNALS::TP_SIGTERM:
 				b_run = false;
 				break;
 			default:
@@ -348,7 +348,7 @@ protected:
 
 		{
 			Guard_t guard(m_mtx_signals);
-			m_vect_signals.at(ku_li_MY_ID_) = THREAD_SIGNALS::TERMINATING;
+			m_vect_signals.at(ku_li_MY_ID_) = THREAD_SIGNALS::TP_TERMINATING;
 		}
 	} // end idle_thread
 
@@ -371,9 +371,9 @@ protected:
 			m_q_tasks.pop();
 
 			Guard_t guard(m_mtx_signals);
-			if (m_vect_signals[ku_li_MY_ID_] != THREAD_SIGNALS::SIGTERM)
+			if (m_vect_signals[ku_li_MY_ID_] != THREAD_SIGNALS::TP_SIGTERM)
 			{
-				m_vect_signals[ku_li_MY_ID_] = THREAD_SIGNALS::WORKING;
+				m_vect_signals[ku_li_MY_ID_] = THREAD_SIGNALS::TP_WORKING;
 			} // end if
 		} // end if
 		else
@@ -381,9 +381,9 @@ protected:
 			job = std::this_thread::yield;
 
 			Guard_t guard(m_mtx_signals);
-			if (m_vect_signals[ku_li_MY_ID_] != THREAD_SIGNALS::SIGTERM)
+			if (m_vect_signals[ku_li_MY_ID_] != THREAD_SIGNALS::TP_SIGTERM)
 			{
-				m_vect_signals[ku_li_MY_ID_] = THREAD_SIGNALS::IDLE;
+				m_vect_signals[ku_li_MY_ID_] = THREAD_SIGNALS::TP_IDLE;
 			} // end if
 		} // end else
 

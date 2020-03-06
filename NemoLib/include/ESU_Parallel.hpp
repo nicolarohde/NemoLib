@@ -36,12 +36,15 @@ namespace ESU_Parallel
 	  *                  Subgraphs will be stored.
 	  * @param subgraphSize the size of the target Subgraphs
 	  */
-	static void enumerate(Graph& graph, SubgraphEnumerationResult* subgraphs, int subgraphSize, ThreadPool* my_pool)
+	static void enumerate(Graph& graph, SubgraphEnumerationResult* subgraphs, int subgraphSize, ThreadPool* my_pool, const std::string& labelg_path)
 	{
-		NautyLink nautylink(subgraphSize, graph.getEdges(), graph.isDirected());
+		// std::cerr << "Creating nautylink object ..." << std::endl;
+		NautyLink nautylink(labelg_path, subgraphSize, graph.getEdges(), graph.isDirected());
 
 		std::vector<SubgraphCount> all_subgraphs;
 		all_subgraphs.reserve(graph.getSize());
+
+		// std::cerr << "Creating jobs ..." << std::endl;
 
 		for (std::size_t i = 0; i < graph.getSize(); i++)
 		{
@@ -63,9 +66,12 @@ namespace ESU_Parallel
 			); // end Add_Job
 		} // end for i
 
+		// std::cerr << "Synchronizing ..." << std::endl;
+
 		my_pool->Synchronize();
 
-		*dynamic_cast<SubgraphCount*>(subgraphs) = get_vector_sum(all_subgraphs.begin(), all_subgraphs.end(), SubgraphCount());
+		// std::cerr << "Done with sync ..." << std::endl;
 
+		*dynamic_cast<SubgraphCount*>(subgraphs) = get_vector_sum(all_subgraphs.begin(), all_subgraphs.end(), SubgraphCount());
 	} // end method enumerate
 };

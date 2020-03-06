@@ -53,7 +53,7 @@ public:
 	// noexcept qualifier as STL uses std::move_if_noexcept
 	Subgraph(Subgraph&& other) noexcept
 	{
-		*this = other;
+		*this = std::move(other);
 	} // end Move Constructor
 
 

@@ -39,13 +39,13 @@ using std::unordered_map;
  */
 
 
-unordered_map <graph64, vector<double>> RandomGraphAnalysis::analyze(Graph& targetGraph, int randomGraphCount, int subgraphSize, const vector<double>& probs)
+unordered_map <std::string, vector<double>> RandomGraphAnalysis::analyze(Graph& targetGraph, int randomGraphCount, int subgraphSize, const vector<double>& probs, const std::string& labelg_path)
 {
 	// create the return map and fill it with the labels we found in the
 	// target graph, as those are the only labels about which we care
 	// TODO consider changing this, as it creates the precondition of
 	// executing the target graph analysis first
-	unordered_map<graph64, vector<double>> labelRelFreqsMap;
+	unordered_map<std::string, vector<double>> labelRelFreqsMap;
 	for (int i = 0; i < randomGraphCount; i++)
 	{
 		//display status for every 100th graph
@@ -59,13 +59,13 @@ unordered_map <graph64, vector<double>> RandomGraphAnalysis::analyze(Graph& targ
 
 		// enumerate random graphs
 		SubgraphCount subgraphCount;
-		RandESU::enumerate(randomGraph, &subgraphCount, subgraphSize, probs);
-		unordered_map<graph64, double> curLabelRelFreqMap = std::move(subgraphCount.getRelativeFrequencies());
+		RandESU::enumerate(randomGraph, &subgraphCount, subgraphSize, probs, labelg_path);
+		unordered_map<std::string, double> curLabelRelFreqMap = std::move(subgraphCount.getRelativeFrequencies());
 
 		// populate labelRelReqsMap with result
 		for (const auto& curLabelRelFreqPair : curLabelRelFreqMap)
 		{
-			graph64 curLabel = curLabelRelFreqPair.first;
+			std::string curLabel = curLabelRelFreqPair.first;
 			double curFreq = curLabelRelFreqPair.second;
 			labelRelFreqsMap[curLabel].push_back(curFreq);
 		}

@@ -27,23 +27,24 @@ class NautyLink;
 	// of type label that include the node.
 
 /* This class will have two maps: subgraphprofile and subgraphcount map */
-class SubgraphProfile:public SubgraphEnumerationResult {
+class SubgraphProfile : public SubgraphEnumerationResult 
+{
 public:
     // get the size of vertex as parameter
 	SubgraphProfile(uint64_t size) : graphsize(size) {}
     virtual ~SubgraphProfile() = default;
-    void add(Subgraph&, NautyLink&);
+    virtual void add(Subgraph&, NautyLink&);
 
-	std::unordered_map<graph64, uint64_t> getlabelFreqMap(int); //need subgraphsize to calculate frequency
-	std::unordered_map <graph64, double> getRelativeFrequencies();
+	std::unordered_map<std::string, uint64_t> getlabelFreqMap(int); //need subgraphsize to calculate frequency
+	std::unordered_map <std::string, double> getRelativeFrequencies();
 
-	inline std::unordered_map<graph64, std::vector<uint64_t>> getlabelVertexFreqMapMap()
+	inline std::unordered_map<std::string, std::vector<uint64_t>> getlabelVertexFreqMapMap()
 	{
 		return labelVertexFreqMapMap;
 	}
 
 private:
-	std::unordered_map<graph64, std::vector<uint64_t>> labelVertexFreqMapMap;
+	std::unordered_map<std::string, std::vector<uint64_t>> labelVertexFreqMapMap;
 	uint64_t graphsize;
 
 	inline uint64_t getTotalSubgaphCount(void)

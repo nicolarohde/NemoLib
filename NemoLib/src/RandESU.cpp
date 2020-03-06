@@ -28,9 +28,11 @@ using std::vector;
  * @param graph           the graph on which to execute RAND-ESU
  * @param subgraphSize    the size of the target Subgraphs
  */
-void RandESU::enumerate(Graph& graph, SubgraphEnumerationResult* subgraphs, int subgraphsize, const vector<double>& probs) 
+void RandESU::enumerate(Graph& graph, SubgraphEnumerationResult* subgraphs, int subgraphsize, const vector<double>& probs, const std::string& labelg_path) 
 {
 	std::size_t numVerticesToSelect = probs[0] == 1.0 ? graph.getSize() : static_cast<std::size_t>(round(probs[0] * graph.getSize()));
+
+	//std::cerr << "In enumerate ..." << std::endl;
 
     // maintain list of nodes selected so far
     std::vector<vertex> selectedVertices(numVerticesToSelect);
@@ -58,7 +60,11 @@ void RandESU::enumerate(Graph& graph, SubgraphEnumerationResult* subgraphs, int 
         } // end for current
     } // end else
 
-    NautyLink nautylink(subgraphsize, graph.getEdges(), graph.isDirected());
+	//std::cerr << "Creating nautylink ..." << std::endl;
+
+    NautyLink nautylink(labelg_path, subgraphsize, graph.getEdges(), graph.isDirected());
+
+	//std::cerr << "Enumerating ..." << std::endl;
 
     for (auto v : selectedVertices) 
 	{
@@ -100,6 +106,7 @@ void RandESU::enumerate(Graph& graph, SubgraphEnumerationResult* subgraphs, int 
     // randomly decide whether to extend
     if (shouldExtend(probs[1])) 
 	{
+		//std::cerr << "Calling extend ..." << std::endl;
         extend(graph, subgraph, std::move(extends), probs, subgraphs, nautylink);
     } // end if
 } // end method enumerate(6)
@@ -118,12 +125,15 @@ void RandESU::extend(Graph& graph, Subgraph& subgraph, vector<vertex> extension,
 			{
 				Subgraph subgraphUnion(subgraph);
 				subgraphUnion.add(element);
+				//std::cerr << "Calling subgraph->add ..." << std::endl;
 				subgraphs->add(subgraphUnion, nautylink);
 			} // end if
         } // end for element
     } // end if
 	else
 	{
+		//std::cerr << "In else of extend ..." << std::endl;
+
 		vertex v = subgraph.root();
 
 		// iterating over a vector and erasing items invalidates the iterator

@@ -15,13 +15,13 @@ namespace Statistical_Analysis
 {
 	// Forward declaration of namespace members:
 	struct stats_data;
-	std::unordered_map<graph64, double> getZScores(stats_data& data);
-	std::unordered_map<graph64, double> getPValues(stats_data& data);
-	double getPValue(graph64 label, stats_data& data);
-	double getZScore(graph64 label, double mean, double stdDev, stats_data& data);
-	double getZScore(graph64 label, stats_data& data);
-	double calcRandStdDev(graph64 label, double randMean, stats_data& data);
-	double calcRandMean(graph64 label, stats_data& data);
+	std::unordered_map<std::string, double> getZScores(stats_data& data);
+	std::unordered_map<std::string, double> getPValues(stats_data& data);
+	double getPValue(const std::string& label, stats_data& data);
+	double getZScore(const std::string& label, double mean, double stdDev, stats_data& data);
+	double getZScore(const std::string& label, stats_data& data);
+	double calcRandStdDev(const std::string& label, double randMean, stats_data& data);
+	double calcRandMean(const std::string& label, stats_data& data);
 
 
 	///<summary>
@@ -33,18 +33,18 @@ namespace Statistical_Analysis
 	///</remarks>
 	struct stats_data
 	{
-		stats_data(std::unordered_map<graph64, double>* _target, std::unordered_map<graph64, std::vector<double>>* _random, std::size_t _count)
+		stats_data(std::unordered_map<std::string, double>* _target, std::unordered_map<std::string, std::vector<double>>* _random, std::size_t _count)
 			: targetGraphRelFreqs{ _target }, randomGraphRelFreqs{ _random }, randGraphCount{_count} {}
 
 		///<summary>
 		/// Relative frequencies in the target graph.
 		///</summary>
-		std::unordered_map<graph64, double>* targetGraphRelFreqs;
+		std::unordered_map<std::string, double>* targetGraphRelFreqs;
 
 		///<summary>
 		/// Relative frequencies in the randomly generated graph(s).
 		///</summary>
-		std::unordered_map<graph64, std::vector<double>>* randomGraphRelFreqs;
+		std::unordered_map<std::string, std::vector<double>>* randomGraphRelFreqs;
 
 		///<summary>
 		/// Number of randomly generated graphs used to find <see cref="Statistical_Analysis::stats_data::randomGraphRelFreqs"/>.
@@ -58,9 +58,9 @@ namespace Statistical_Analysis
 	///</summary>
 	///<param name="data"><see cref="Statistical_Analysis::stats_data"/> object with statistical data for z-score calculations.</param>
 	///<returns>A map of {label : z-score} pairs.</returns>
-	std::unordered_map<graph64, double> getZScores(stats_data& data)
+	std::unordered_map<std::string, double> getZScores(stats_data& data)
 	{
-		std::unordered_map<graph64, double> zScores(data.randomGraphRelFreqs->size());
+		std::unordered_map<std::string, double> zScores(data.randomGraphRelFreqs->size());
 
 		for (auto& p : *(data.randomGraphRelFreqs))
 		{
@@ -79,9 +79,9 @@ namespace Statistical_Analysis
 	///</summary>
 	///<param name="data"><see cref="Statistical_Analysis::stats_data"/> object with statistical data for p-value calculations.</param>
 	///<returns>A map of {label : p-value} pairs.</returns>
-	std::unordered_map<graph64, double> getPValues(stats_data& data)
+	std::unordered_map<std::string, double> getPValues(stats_data& data)
 	{
-		std::unordered_map<graph64, double>  pValues(data.randomGraphRelFreqs->size());
+		std::unordered_map<std::string, double>  pValues(data.randomGraphRelFreqs->size());
 		for (auto& p : *(data.randomGraphRelFreqs))
 		{
 			pValues[p.first] = getPValue(p.first, data);
@@ -100,7 +100,7 @@ namespace Statistical_Analysis
 	/// 2) 1 if the motif never occurred in the target graph;
 	/// 3) a value in the range (0,1) representing the p-value of the given motif.
 	///</returns>
-	double getPValue(graph64 label, stats_data& data)
+	double getPValue(const std::string& label, stats_data& data)
 	{
 		// if a label appears in the target graph that didn't show up in any
 		// random graphs, clearly it's a network motif. This scenario shouldn't
@@ -139,7 +139,7 @@ namespace Statistical_Analysis
 	/// 1) 0 if the <paramref name="stdDev"/> is 0;
 	/// 2) The z-score associated with the motif-candidate <paramref name="label"/>.
 	///</returns>
-	double getZScore(graph64 label, double mean, double stdDev, stats_data& data)
+	double getZScore(const std::string& label, double mean, double stdDev, stats_data& data)
 	{
 		double targetGraphFreq = data.targetGraphRelFreqs->count(label) == 0 ? 0.0 : (*(data.targetGraphRelFreqs))[label];
 		return (stdDev == 0 ? 0.0 : (targetGraphFreq - mean) / stdDev);
@@ -155,7 +155,7 @@ namespace Statistical_Analysis
 	/// 1) 0 if the calculated standard deviation is 0;
 	/// 2) The z-score associated with the motif-candidate <paramref name="label"/>.
 	///</returns>
-	double getZScore(graph64 label, stats_data& data)
+	double getZScore(const std::string& label, stats_data& data)
 	{
 		double randMean = calcRandMean(label, data);
 		return getZScore(label, randMean, calcRandStdDev(label, randMean, data), data);
@@ -172,7 +172,7 @@ namespace Statistical_Analysis
 	/// 1) 0 if the calculated standard deviation is 0;
 	/// 2) The z-score associated with the motif-candidate <paramref name="label"/>.
 	///</returns>
-	double calcRandStdDev(graph64 label, double randMean, stats_data& data)
+	double calcRandStdDev(const std::string& label, double randMean, stats_data& data)
 	{
 		double variance = get_vector_sum((*(data.randomGraphRelFreqs))[label].begin(), (*(data.randomGraphRelFreqs))[label].end(), 0.0,
 			[&](auto prev, auto cur) { return prev + std::pow((cur - randMean), 2); });
@@ -189,7 +189,7 @@ namespace Statistical_Analysis
 	///<returns>
 	/// The random mean associated with the motif-candidate <paramref name="label"/>.
 	///</returns>
-	double calcRandMean(graph64 label, stats_data& data)
+	double calcRandMean(const std::string& label, stats_data& data)
 	{
 		std::vector<double>* relFreqs = &(*(data.randomGraphRelFreqs))[label];
 
@@ -206,7 +206,7 @@ namespace Statistical_Analysis
 
 		for (auto& p : *(stats.randomGraphRelFreqs))
 		{
-			graph64 label = p.first;
+			auto& label = p.first;
 			out << label << "\t";
 			if ((*(stats.targetGraphRelFreqs)).count(label) > 0)
 			{

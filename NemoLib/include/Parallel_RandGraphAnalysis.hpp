@@ -21,7 +21,7 @@ namespace Parallel_Analysis
 {
 #if _USE_CUDA
 
-	std::unordered_map <graph64, std::vector<double>> analyze(Graph& targetGraph, std::size_t randomGraphCount, std::size_t subgraphSize, const std::vector<double>& probs, ThreadPool* my_pool)
+	std::unordered_map <std::string, std::vector<double>> analyze(Graph& targetGraph, std::size_t randomGraphCount, std::size_t subgraphSize, const std::vector<double>& probs, ThreadPool* my_pool)
 	{
 		using enum_job = Job<void, Graph&, SubgraphEnumerationResult*, int, const std::vector<double>&>;
 		using process_job = Job<void, SubgraphCount&>;
@@ -31,7 +31,7 @@ namespace Parallel_Analysis
 		// target graph, as those are the only labels about which we care
 		// TODO consider changing this, as it creates the precondition of
 		// executing the target graph analysis first
-		std::unordered_map<graph64, std::vector<double>> labelRelFreqsMap;
+		std::unordered_map<std::string, std::vector<double>> labelRelFreqsMap;
 		std::vector<SubgraphCount> all_subgraphs(randomGraphCount);
 
 		my_pool->Start_All_Threads();
@@ -64,7 +64,7 @@ namespace Parallel_Analysis
 
 		for (auto& subgraphCount : all_subgraphs)
 		{
-			std::unordered_map<graph64, double> curLabelRelFreqMap = std::move(subgraphCount.getRelativeFrequencies());
+			std::unordered_map<std::string, double> curLabelRelFreqMap = std::move(subgraphCount.getRelativeFrequencies());
 
 			// populate labelRelReqsMap with result
 			for (const auto& p : curLabelRelFreqMap)
@@ -89,44 +89,44 @@ namespace Parallel_Analysis
 
 #else
 
-	std::unordered_map <graph64, std::vector<double>> analyze(Graph& targetGraph, std::size_t randomGraphCount, std::size_t subgraphSize, 
-	                                                          const std::vector<double>& probs, ThreadPool* my_pool)
+	std::unordered_map<std::string, std::vector<double>> analyze(Graph& targetGraph, std::size_t randomGraphCount, std::size_t subgraphSize, 
+	                                                          const std::vector<double>& probs, ThreadPool* my_pool, const std::string& labelg_path)
 	{
 		// create the return map and fill it with the labels we found in the
 		// target graph, as those are the only labels about which we care
 		// TODO consider changing this, as it creates the precondition of
 		// executing the target graph analysis first
-		std::unordered_map<graph64, std::vector<double>> labelRelFreqsMap;
+		std::unordered_map<std::string, std::vector<double>> labelRelFreqsMap;
 		std::vector<SubgraphCount> all_subgraphs(randomGraphCount);
 
 		my_pool->Start_All_Threads();
 
-		std::cout << "Creating jobs for random analysis ..." << std::endl;
+		//std::cout << "Creating jobs for random analysis ..." << std::endl;
 
 		for (int i = 0; i < randomGraphCount; i++)
 		{
 			my_pool->Add_Job(
-				[&targetGraph, &all_subgraphs, i, subgraphSize, &probs](void) 
+				[&targetGraph, &all_subgraphs, i, subgraphSize, &probs, labelg_path](void) 
 				{
 					// generate random graphs
 					Graph randomGraph = std::move(RandomGraphGenerator::generate(targetGraph));
 					SubgraphEnumerationResult* my_subgraphs = dynamic_cast<SubgraphEnumerationResult*>(&all_subgraphs[i]);
 					int my_size = static_cast<int>(subgraphSize);
 
-					RandESU::enumerate(randomGraph, my_subgraphs, my_size, probs);
+					RandESU::enumerate(randomGraph, my_subgraphs, my_size, probs, labelg_path);
 				} // end lambda
 			); // end Add_Job
 		} // end for i
 
-		std::cout << "Waiting for jobs to finish ..." << std::endl;
+		//std::cout << "Waiting for jobs to finish ..." << std::endl;
 
 		my_pool->Synchronize();
 
-		std::cout << "Jobs completed!" << std::endl;
+		//std::cout << "Jobs completed!" << std::endl;
 
 		for (auto& subgraphCount : all_subgraphs)
 		{
-			std::unordered_map<graph64, double> curLabelRelFreqMap = std::move(subgraphCount.getRelativeFrequencies());
+			std::unordered_map<std::string, double> curLabelRelFreqMap = std::move(subgraphCount.getRelativeFrequencies());
 
 			// populate labelRelReqsMap with result
 			for (const auto& p : curLabelRelFreqMap)

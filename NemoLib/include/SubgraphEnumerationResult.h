@@ -39,7 +39,7 @@ public:
 	 * of labels in this subgraph.
 	 * @return The map of relative frequencies
 	 */
-    virtual std::unordered_map <graph64, double> getRelativeFrequencies(void) = 0;
+    virtual std::unordered_map <std::string, double> getRelativeFrequencies(void) = 0;
 };
 
 #endif /* SUBGRAPHENUMERATIONRESULT_H */

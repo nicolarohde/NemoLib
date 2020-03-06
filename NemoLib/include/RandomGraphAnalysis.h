@@ -35,7 +35,7 @@ class RandomGraphAnalysis
 public:
     // not allowed 
     RandomGraphAnalysis(void) = delete;
-    static std::unordered_map<graph64, std::vector<double>> analyze(Graph&, int, int, const std::vector<double>&);
+    static std::unordered_map<std::string, std::vector<double>> analyze(Graph&, int, int, const std::vector<double>&, const std::string&);
 };
 
 #endif /* RANDOMGRAPHANALYSIS_H */

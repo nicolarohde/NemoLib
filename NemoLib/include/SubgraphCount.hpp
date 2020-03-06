@@ -36,9 +36,9 @@ public:
 	SubgraphCount(const SubgraphCount& other) = default;
 
 
-	virtual std::unordered_map<graph64, double> getRelativeFrequencies()
+	virtual std::unordered_map<std::string, double> getRelativeFrequencies()
 	{
-		std::unordered_map<graph64, double> result_map;
+		std::unordered_map<std::string, double> result_map;
 		uint64_t totalSubgraphCount = 0;
 
 		for (auto& p : labelFreqMap)
@@ -60,7 +60,9 @@ public:
 	/* Implement the add function of subgraph enumeration result*/
 	inline virtual void add(Subgraph& currentSubgraph, NautyLink& nautylink)
 	{
-		graph64 label = nautylink.nautylabel(currentSubgraph);
+		//std::cerr << "In SubgraphCount add ..." << std::endl;
+
+		std::string label = nautylink.nautylabel_helper(currentSubgraph);
 		uint64_t total = (labelFreqMap.count(label) == 0 ? 1 : labelFreqMap[label] + 1);
 		labelFreqMap[label] = total;
 	}
@@ -68,18 +70,18 @@ public:
 	/* Implement the add function of subgraph enumeration result*/
 	inline virtual void add(Subgraph& currentSubgraph, NautyLink& nautylink)
 	{
-		graph64 label = nautylink.nautylabel(currentSubgraph);
+		std::string label = nautylink.nautylabel(currentSubgraph);
 		uint64_t total = (labelFreqMap.count(label) == 0 ? 1 : labelFreqMap[label] + 1);
 		labelFreqMap[label] = total;
 	}
 #endif
 
-	inline std::unordered_map<graph64, uint64_t> getlabeFreqMap()
+	inline std::unordered_map<std::string, uint64_t> getlabeFreqMap()
 	{
 		return labelFreqMap;
 	}
 
-	inline std::unordered_map<graph64, uint64_t>* getLabelFreqMapAccess()
+	inline std::unordered_map<std::string, uint64_t>* getLabelFreqMapAccess()
 	{
 		return &labelFreqMap;
 	}
@@ -122,7 +124,7 @@ public:
 	}
 
 private:
-	std::unordered_map<graph64, uint64_t> labelFreqMap;
+	std::unordered_map<std::string, uint64_t> labelFreqMap;
 };
 
 #endif /* SUBGRAPHCOUNT_H */

@@ -28,8 +28,11 @@ using std::unordered_map;
  */
 void SubgraphProfile::add(Subgraph& currentSubgraph, NautyLink& nautylink)
 {
+	std::cerr << "In SubgraphProfile add ..." << std::endl;
+	std::cerr << "Getting cannonical label for subgraph ..." << std::endl;
+
 	// first, get the label
-	graph64 label = nautylink.nautylabel(currentSubgraph);
+	std::string label = nautylink.nautylabel_helper(currentSubgraph);
 
 	// get the current nodes
 	vector<vertex>& nodes = currentSubgraph.getNodes();
@@ -48,9 +51,9 @@ void SubgraphProfile::add(Subgraph& currentSubgraph, NautyLink& nautylink)
 }
 
 
-unordered_map<graph64, uint64_t> SubgraphProfile::getlabelFreqMap(int subgraphsize)
+unordered_map<std::string, uint64_t> SubgraphProfile::getlabelFreqMap(int subgraphsize)
 {
-	unordered_map <graph64, uint64_t> labelFreqMap;
+	unordered_map <std::string, uint64_t> labelFreqMap;
 
 	for (auto& p : labelVertexFreqMapMap)
 	{
@@ -60,9 +63,9 @@ unordered_map<graph64, uint64_t> SubgraphProfile::getlabelFreqMap(int subgraphsi
 	return labelFreqMap;
 }
 
-unordered_map <graph64, double> SubgraphProfile::getRelativeFrequencies()
+unordered_map <std::string, double> SubgraphProfile::getRelativeFrequencies()
 {
-	unordered_map<graph64, double> result(labelVertexFreqMapMap.size());
+	unordered_map<std::string, double> result(labelVertexFreqMapMap.size());
 	double totalcount = static_cast<double>(getTotalSubgaphCount());
 
 	for (auto& p : labelVertexFreqMapMap)

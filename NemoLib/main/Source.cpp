@@ -65,6 +65,7 @@ int main(int argc, char** argv)
 	const std::size_t n_threads = argc > 2 ? atoi(argv[2]) : 16;
 	const std::size_t motifSize = argc > 3 ? atoi(argv[3]) : 4;
 	const std::size_t randomCount = argc > 4 ? atoi(argv[4]) : 1000;
+	const string labelg_path = argc > 5 ? argv[5] : "./labelg";
 
 	SubgraphCount subc;
 	vector<double> probs(motifSize - 2, 1.0);
@@ -82,17 +83,19 @@ int main(int argc, char** argv)
 
 	Graph targetg(filename, false);
 
+	std::cout << "Enumerating graph ..." << std::endl;
+
 #if _USE_THREAD_POOL
-	ESU_Parallel::enumerate(targetg, dynamic_cast<SubgraphEnumerationResult*>(&subc), static_cast<int>(motifSize), &my_pool);
+	ESU_Parallel::enumerate(targetg, dynamic_cast<SubgraphEnumerationResult*>(&subc), static_cast<int>(motifSize), &my_pool, labelg_path);
 #else
 	ESU::enumerate(targetg, dynamic_cast<SubgraphEnumerationResult*>(&subc), static_cast<int>(motifSize));
 #endif
-	unordered_map<graph64, double> targetLabelRelFreqMap(std::move(subc.getRelativeFrequencies()));
+	unordered_map<std::string, double> targetLabelRelFreqMap(std::move(subc.getRelativeFrequencies()));
 
 	cout << "Analyzing random graphs..." << endl << endl;
 
 #if _USE_THREAD_POOL
-	unordered_map<graph64, vector<double>> randLabelRelFreqsMap = std::move(Parallel_Analysis::analyze(targetg, randomCount, motifSize, probs, &my_pool));
+	unordered_map<std::string, vector<double>> randLabelRelFreqsMap = std::move(Parallel_Analysis::analyze(targetg, randomCount, motifSize, probs, &my_pool, labelg_path));
 	// alert all threads to terminate to save resources
 	my_pool.Kill_All();
 #else

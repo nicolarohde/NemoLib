@@ -14,9 +14,9 @@ install_headers(
     'RandomGraphGenerator.hpp', 
     'Stats.hpp',  
     'Subgraph.hpp', 
+    'SubgraphCollection.hpp',
     'SubgraphCount.hpp', 
     'SubgraphEnumerationResult.hpp',
     'SubgraphProfile.hpp',
-#   'ThreadPool.hpp',
     'Utility.hpp'
 )

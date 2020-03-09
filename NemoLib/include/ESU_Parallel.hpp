@@ -36,19 +36,20 @@ namespace ESU_Parallel
 	  *                  Subgraphs will be stored.
 	  * @param subgraphSize the size of the target Subgraphs
 	  */
+	template <typename T>
 	static void enumerate(Graph& graph, SubgraphEnumerationResult* subgraphs, int subgraphSize, ThreadPool* my_pool, const std::string& labelg_path)
 	{
 		// std::cerr << "Creating nautylink object ..." << std::endl;
 		NautyLink nautylink(labelg_path, subgraphSize, graph.getEdges(), graph.isDirected());
 
-		std::vector<SubgraphCount> all_subgraphs;
+		std::vector<T> all_subgraphs;
 		all_subgraphs.reserve(graph.getSize());
 
 		// std::cerr << "Creating jobs ..." << std::endl;
 
 		for (std::size_t i = 0; i < graph.getSize(); i++)
 		{
-			all_subgraphs.push_back(*dynamic_cast<SubgraphCount*>(subgraphs));
+			all_subgraphs.push_back(*dynamic_cast<T*>(subgraphs));
 
 			int my_size = subgraphSize;
 			vertex my_vertex = static_cast<vertex>(i);
@@ -58,7 +59,7 @@ namespace ESU_Parallel
 				{
 					const std::vector<double> probs(my_size, 1.0);
 					Graph& my_graph = graph;
-					SubgraphEnumerationResult* my_result = &all_subgraphs[i];
+					T* my_result = &all_subgraphs[i];
 					NautyLink& my_link = nautylink;
 					//enumerate(Graph&, SubgraphEnumerationResult*, int, const std::vector<double>&, vertex, NautyLink&);
 					RandESU::enumerate(my_graph, my_result, my_size, probs, my_vertex, my_link);
@@ -71,7 +72,8 @@ namespace ESU_Parallel
 		my_pool->Synchronize();
 
 		// std::cerr << "Done with sync ..." << std::endl;
+		//std::cerr << "All subgraphs length: " << all_subgraphs.size() << std::endl;
 
-		*dynamic_cast<SubgraphCount*>(subgraphs) = get_vector_sum(all_subgraphs.begin(), all_subgraphs.end(), SubgraphCount());
+		*dynamic_cast<T*>(subgraphs) = get_vector_sum(all_subgraphs.begin(), all_subgraphs.end(), T());
 	} // end method enumerate
 };

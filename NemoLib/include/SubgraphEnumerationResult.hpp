@@ -16,6 +16,7 @@
 /*This class is an interface class*/
 
 #include <unordered_map>
+#include <string>
 
 #include "Config.hpp"
 #include "graph64.hpp"
@@ -45,7 +46,7 @@ public:
 	 * of labels in this subgraph.
 	 * @return The map of relative frequencies
 	 */
-    virtual std::unordered_map <std::string, double> getRelativeFrequencies(void) = 0;
+    virtual std::unordered_map <std::string, double> getRelativeFrequencies(void) const = 0;
 };
 
 #endif /* SUBGRAPHENUMERATIONRESULT_H */

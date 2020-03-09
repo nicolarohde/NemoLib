@@ -12,14 +12,14 @@
   */
 
 #include "RandomGraphGenerator.hpp"	// class header
-#include "Utility.hpp"						// RNG_provider, get_random_in_range, get_vector_sum
-#include <algorithm>							// shuffle
+#include "Utility.hpp"				// RNG_provider, get_random_in_range, get_vector_sum
+#include <algorithm>				// shuffle
 
 using std::shuffle;
 using std::vector;
 
 
-Graph RandomGraphGenerator::generate(Graph& inputGraph)
+Graph RandomGraphGenerator::generate(const Graph& inputGraph)
 {
 	vector<int> degreeSeq = std::move(getDegreeSequenceVector(inputGraph));
 	vector<vertex> vertexList;
@@ -84,7 +84,7 @@ Graph RandomGraphGenerator::generate(Graph& inputGraph)
 } // end method generate
 
 
-Graph RandomGraphGenerator::generate(Graph& inputGraph, const vector <int>& probs)
+Graph RandomGraphGenerator::generate(const Graph& inputGraph, const vector <int>& probs)
 {
 	vector<int> degreeSeq = std::move(getDegreeSequenceVector(inputGraph));
 	vector<int> vertexList;
@@ -159,7 +159,7 @@ Graph RandomGraphGenerator::generate(Graph& inputGraph, const vector <int>& prob
  * vector
  * @return a List representing the degree sequence vector
  */
-vector<int> RandomGraphGenerator::getDegreeSequenceVector(Graph& inputGraph)
+vector<int> RandomGraphGenerator::getDegreeSequenceVector(const Graph& inputGraph)
 {
 	vector <int> degreeSequenceVector(inputGraph.getSize(), 0);
 

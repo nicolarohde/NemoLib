@@ -1,8 +1,7 @@
 #include "Config.hpp"
 #include "Utility.hpp"
 #include "Graph.hpp"
-#include "SubgraphCount.hpp"
-#include "SubgraphProfile.hpp"
+#include "SubgraphCollection.hpp"
 #include "Stats.hpp"
 #include <chrono>
 #include <string>
@@ -42,11 +41,13 @@ void printmap(const T& _map)
 void display_help(string _name)
 {
 	std::cout << "Usage:" << std::endl;
-	std::cout << "\t" << _name << " [file path] [# threads] [motif size] [# random graphs]" << std::endl;
+	std::cout << "\t" << _name << " [file path] [# threads] [motif size] [# random graphs] [labelg path] [nemo path]" << std::endl;
 	std::cout << "\t\t[file path]       -- complete or relative path to graph (g6 or d6 formatted) file." << std::endl;
 	std::cout << "\t\t[# threads]       -- number of threads to use (ignored for sequential nemolib)." << std::endl;
 	std::cout << "\t\t[motif size]      -- size of motif to search for." << std::endl;
 	std::cout << "\t\t[# random graphs] -- number of random graphs to use for ESU." << std::endl;
+	std::cout << "\t\t[labelg path]     -- path to the special labelg binary." << std::endl;
+	std::cout << "\t\t[nemo path]       -- path where to store the nemo collection." << std::endl;
 	std::cout << "\t\t[--h | --help]    -- use instead of [file path] to display this help menu." << std::endl;
 } // end method display_help
 
@@ -64,8 +65,10 @@ int main(int argc, char** argv)
 	const std::size_t motifSize = argc > 3 ? atoi(argv[3]) : 4;
 	const std::size_t randomCount = argc > 4 ? atoi(argv[4]) : 1000;
 	const string labelg_path = argc > 5 ? argv[5] : "./labelg";
+	const string nemoc_path = argc > 6 ? argv[6] : "./test/nemocollection.txt";
 
-	SubgraphCount subc;
+	//SubgraphCollection subc(false);
+	auto subc = new SubgraphCollection(false);
 	vector<double> probs(motifSize - 2, 1.0);
 	probs.insert(probs.end(), { 0.5, 0.5 });
 
@@ -84,13 +87,13 @@ int main(int argc, char** argv)
 	std::cout << "Enumerating graph ..." << std::endl;
 
 #if _USE_THREAD_POOL
-	ESU_Parallel::enumerate<SubgraphCount>(targetg, &subc, static_cast<int>(motifSize), &my_pool, labelg_path);
+	ESU_Parallel::enumerate<SubgraphCollection>(targetg, subc, static_cast<int>(motifSize), &my_pool, labelg_path);
 #else
 	ESU::enumerate(targetg, dynamic_cast<SubgraphEnumerationResult*>(&subc), static_cast<int>(motifSize));
 #endif
-	unordered_map<std::string, double> targetLabelRelFreqMap(std::move(subc.getRelativeFrequencies()));
+	unordered_map<std::string, double> targetLabelRelFreqMap(std::move(subc->getRelativeFrequencies()));
 
-	cout << "Analyzing random graphs..." << endl << endl;
+	cout << "Analyzing random graphs..." << endl;
 
 #if _USE_THREAD_POOL
 
@@ -107,16 +110,29 @@ int main(int argc, char** argv)
 	unordered_map<graph64, vector<double>> randLabelRelFreqsMap = std::move(RandomGraphAnalysis::analyze(targetg, randomCount, motifSize, probs));
 #endif
 
-	cout << "Comparing target graph to random graphs ... " << endl << endl;
+	cout << "Comparing target graph to random graphs ... " << endl;
 
 	Statistical_Analysis::stats_data data{&targetLabelRelFreqMap, &randLabelRelFreqsMap, randomCount};
 
+	cout << "Finding motifs ..." << endl;
+
+	subc->find_network_motifs(data);
+
 	auto end = _Clock::now();
+
+	cout << "Writing motifs to file ..." << endl;
+
+	subc->write_nemo_collection(nemoc_path, false);
+
+	cout << "Done writing motifs" << endl;
 
 	cout << endl << data << endl;
 
 	cout << "Time = " << chrono_duration<milliseconds, decltype(begin)>(begin, end) << " milliseconds." << endl;
-	cout << "Time = " << chrono_duration<seconds, decltype(begin)>(begin, end) << " seconds." << endl;
+
+	subc->flush("", nemoc_path);
+
+	delete subc;
 
 	return (EXIT_SUCCESS);
 }

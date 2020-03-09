@@ -23,6 +23,8 @@
 #include <string>
 #include <vector>
 #include <algorithm>
+#include <sstream>
+
 #include "graph64.hpp"
 
 // using-statements pollute the files that include this header
@@ -55,6 +57,30 @@ public:
 	{
 		*this = std::move(other);
 	} // end Move Constructor
+
+
+	operator std::string(void) const
+	{
+		std::stringstream out;
+
+		if (nodes.size() < 1)
+		{
+			out << "empty";
+		}
+		else
+		{
+			out << "[";
+
+			for (std::size_t i = 0; i < nodes.size() - 1; i++)
+			{
+				out << std::to_string(nodes[i]) << ",";
+			}
+
+			out << std::to_string(nodes.back()) << "]";
+		}
+		
+		return out.str();
+	}
 
 
 	// Regular copy mechanism
@@ -162,21 +188,23 @@ private:
 
 inline std::ostream& operator<<(std::ostream& out, const Subgraph& sgraph)
 {
-	if (sgraph.nodes.size() < 1)
-	{
-		out << "empty";
-	}
-	else
-	{
-		out << "[";
+	// if (sgraph.nodes.size() < 1)
+	// {
+	// 	out << "empty";
+	// }
+	// else
+	// {
+	// 	out << "[";
 
-		for (std::size_t i = 0; i < sgraph.nodes.size() - 1; i++)
-		{
-			out << std::to_string(sgraph.nodes[i]) << ",";
-		}
+	// 	for (std::size_t i = 0; i < sgraph.nodes.size() - 1; i++)
+	// 	{
+	// 		out << std::to_string(sgraph.nodes[i]) << ",";
+	// 	}
 
-		out << std::to_string(sgraph.nodes[sgraph.nodes.size() - 1]) << "]";
-	}
+	// 	out << std::to_string(sgraph.nodes[sgraph.nodes.size() - 1]) << "]";
+	// }
+
+	out << static_cast<std::string>(sgraph);
 
 	return out;
 }

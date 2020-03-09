@@ -36,7 +36,7 @@ public:
     virtual void add(Subgraph&, NautyLink&);
 
 	std::unordered_map<std::string, uint64_t> getlabelFreqMap(int); //need subgraphsize to calculate frequency
-	std::unordered_map <std::string, double> getRelativeFrequencies();
+	std::unordered_map <std::string, double> getRelativeFrequencies() const;
 
 	inline std::unordered_map<std::string, std::vector<uint64_t>> getlabelVertexFreqMapMap()
 	{
@@ -47,12 +47,12 @@ private:
 	std::unordered_map<std::string, std::vector<uint64_t>> labelVertexFreqMapMap;
 	uint64_t graphsize;
 
-	inline uint64_t getTotalSubgaphCount(void)
+	inline uint64_t getTotalSubgaphCount(void) const
 	{
 		uint64_t totalcount = 0;
 		for (auto& p : labelVertexFreqMapMap)
 		{
-			totalcount += get_vector_sum<std::vector<uint64_t>::iterator, uint64_t>(p.second.begin(), p.second.end(), 0);
+			totalcount += get_vector_sum<std::vector<uint64_t>::const_iterator, uint64_t>(p.second.begin(), p.second.end(), 0);
 		}
 		return totalcount;
 	}

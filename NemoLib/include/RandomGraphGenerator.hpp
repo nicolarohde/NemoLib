@@ -27,11 +27,11 @@
 class RandomGraphGenerator 
 {
 public:
-    static Graph generate(Graph&);
-    static Graph generate(Graph&, const std::vector<int>&);
+    static Graph generate(const Graph&);
+    static Graph generate(const Graph&, const std::vector<int>&);
 
 private:
-    static std::vector<int> getDegreeSequenceVector(Graph&);
+    static std::vector<int> getDegreeSequenceVector(const Graph&);
 };
 
 #endif /* RANDOMGRAPHGENERATOR_H */

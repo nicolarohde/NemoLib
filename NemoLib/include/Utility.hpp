@@ -3,23 +3,28 @@
 #ifndef __UTIL_HPP
 #define __UTIL_HPP
 
-#include "Config.hpp"
-#include <random>
-#include <numeric>
-#include <chrono>
-#include <cmath>
-
-#ifndef _min
-#define _min(a,b) (a > b ? b : a)
-#endif
-
-#ifndef _max
-#define _max(a,b) (a > b ? a : b)
-#endif
+#include "Config.hpp" // _C17_EXECUTION_AVAILABLE
+#include <random>     // random_device, mt19937, uniform_int_distribution, uniform_real_distribution
+#include <numeric>    // accumulate
+#include <chrono>     // high_resolution_clock, duration_cast
 
 
 // Typedefs to make the clock and timepoint names shorter
 typedef std::chrono::high_resolution_clock	_Clock;
+
+template <typename T>
+inline T _min(T a, T b)
+{
+	return a > b ? b : a;
+}
+
+
+template <typename T>
+inline T _max(T a, T b)
+{
+	return a > b ? a : b;
+}
+
 
 inline std::mt19937& RNG_provider(void)
 {

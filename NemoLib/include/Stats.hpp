@@ -15,13 +15,13 @@ namespace Statistical_Analysis
 {
 	// Forward declaration of namespace members:
 	struct stats_data;
-	std::unordered_map<std::string, double> getZScores(stats_data& data);
-	std::unordered_map<std::string, double> getPValues(stats_data& data);
-	double getPValue(const std::string& label, stats_data& data);
-	double getZScore(const std::string& label, double mean, double stdDev, stats_data& data);
-	double getZScore(const std::string& label, stats_data& data);
-	double calcRandStdDev(const std::string& label, double randMean, stats_data& data);
-	double calcRandMean(const std::string& label, stats_data& data);
+	std::unordered_map<std::string, double> getZScores(const stats_data& data);
+	std::unordered_map<std::string, double> getPValues(const stats_data& data);
+	double getPValue(const std::string& label, const stats_data& data);
+	double getZScore(const std::string& label, const double mean, const double stdDev, const stats_data& data);
+	double getZScore(const std::string& label, const stats_data& data);
+	double calcRandStdDev(const std::string& label, const double randMean, const stats_data& data);
+	double calcRandMean(const std::string& label, const stats_data& data);
 
 
 	///<summary>
@@ -33,8 +33,8 @@ namespace Statistical_Analysis
 	///</remarks>
 	struct stats_data
 	{
-		stats_data(std::unordered_map<std::string, double>* _target, std::unordered_map<std::string, std::vector<double>>* _random, std::size_t _count)
-			: targetGraphRelFreqs{ _target }, randomGraphRelFreqs{ _random }, randGraphCount{_count} {}
+		stats_data(std::unordered_map<std::string, double>* target_, std::unordered_map<std::string, std::vector<double>>* random_, const std::size_t count_)
+			: targetGraphRelFreqs{ target_ }, randomGraphRelFreqs{ random_ }, randGraphCount{count_} {}
 
 		///<summary>
 		/// Relative frequencies in the target graph.
@@ -58,7 +58,7 @@ namespace Statistical_Analysis
 	///</summary>
 	///<param name="data"><see cref="Statistical_Analysis::stats_data"/> object with statistical data for z-score calculations.</param>
 	///<returns>A map of {label : z-score} pairs.</returns>
-	std::unordered_map<std::string, double> getZScores(stats_data& data)
+	std::unordered_map<std::string, double> getZScores(const stats_data& data)
 	{
 		std::unordered_map<std::string, double> zScores(data.randomGraphRelFreqs->size());
 
@@ -79,7 +79,7 @@ namespace Statistical_Analysis
 	///</summary>
 	///<param name="data"><see cref="Statistical_Analysis::stats_data"/> object with statistical data for p-value calculations.</param>
 	///<returns>A map of {label : p-value} pairs.</returns>
-	std::unordered_map<std::string, double> getPValues(stats_data& data)
+	std::unordered_map<std::string, double> getPValues(const stats_data& data)
 	{
 		std::unordered_map<std::string, double>  pValues(data.randomGraphRelFreqs->size());
 		for (auto& p : *(data.randomGraphRelFreqs))
@@ -100,7 +100,7 @@ namespace Statistical_Analysis
 	/// 2) 1 if the motif never occurred in the target graph;
 	/// 3) a value in the range (0,1) representing the p-value of the given motif.
 	///</returns>
-	double getPValue(const std::string& label, stats_data& data)
+	double getPValue(const std::string& label, const stats_data& data)
 	{
 		// if a label appears in the target graph that didn't show up in any
 		// random graphs, clearly it's a network motif. This scenario shouldn't
@@ -139,9 +139,9 @@ namespace Statistical_Analysis
 	/// 1) 0 if the <paramref name="stdDev"/> is 0;
 	/// 2) The z-score associated with the motif-candidate <paramref name="label"/>.
 	///</returns>
-	double getZScore(const std::string& label, double mean, double stdDev, stats_data& data)
+	double getZScore(const std::string& label, const double mean, const double stdDev, const stats_data& data)
 	{
-		double targetGraphFreq = data.targetGraphRelFreqs->count(label) == 0 ? 0.0 : (*(data.targetGraphRelFreqs))[label];
+		double targetGraphFreq = data.targetGraphRelFreqs->count(label) == 0 ? 0.0 : data.targetGraphRelFreqs->at(label);
 		return (stdDev == 0 ? 0.0 : (targetGraphFreq - mean) / stdDev);
 	} // end method getZScore
 
@@ -155,7 +155,7 @@ namespace Statistical_Analysis
 	/// 1) 0 if the calculated standard deviation is 0;
 	/// 2) The z-score associated with the motif-candidate <paramref name="label"/>.
 	///</returns>
-	double getZScore(const std::string& label, stats_data& data)
+	double getZScore(const std::string& label, const stats_data& data)
 	{
 		double randMean = calcRandMean(label, data);
 		return getZScore(label, randMean, calcRandStdDev(label, randMean, data), data);
@@ -172,9 +172,9 @@ namespace Statistical_Analysis
 	/// 1) 0 if the calculated standard deviation is 0;
 	/// 2) The z-score associated with the motif-candidate <paramref name="label"/>.
 	///</returns>
-	double calcRandStdDev(const std::string& label, double randMean, stats_data& data)
+	double calcRandStdDev(const std::string& label, const double randMean, const stats_data& data)
 	{
-		double variance = get_vector_sum((*(data.randomGraphRelFreqs))[label].begin(), (*(data.randomGraphRelFreqs))[label].end(), 0.0,
+		double variance = get_vector_sum(data.randomGraphRelFreqs->at(label).begin(), data.randomGraphRelFreqs->at(label).end(), 0.0,
 			[&](auto prev, auto cur) { return prev + std::pow((cur - randMean), 2); });
 
 		return std::sqrt(variance / (data.randGraphCount - 1));
@@ -189,9 +189,9 @@ namespace Statistical_Analysis
 	///<returns>
 	/// The random mean associated with the motif-candidate <paramref name="label"/>.
 	///</returns>
-	double calcRandMean(const std::string& label, stats_data& data)
+	double calcRandMean(const std::string& label, const stats_data& data)
 	{
-		std::vector<double>* relFreqs = &(*(data.randomGraphRelFreqs))[label];
+		std::vector<double>* relFreqs = &data.randomGraphRelFreqs->at(label);
 
 		double total = get_vector_sum(relFreqs->begin(), relFreqs->end(), 0.0);
 
@@ -199,7 +199,7 @@ namespace Statistical_Analysis
 	} // end method calcRandMean
 
 
-	std::ostream& operator<<(std::ostream& out, stats_data& stats)
+	std::ostream& operator<<(std::ostream& out, const stats_data& stats)
 	{
 		out << "Label\tRelFreq\t\tMean\t\tStDev\t\tZ-Score\t\tP-Value\n";
 		out.precision(3);
@@ -210,7 +210,7 @@ namespace Statistical_Analysis
 			out << label << "\t";
 			if ((*(stats.targetGraphRelFreqs)).count(label) > 0)
 			{
-				out << std::fixed << (*(stats.targetGraphRelFreqs))[label] * 100.0;
+				out << std::fixed << stats.targetGraphRelFreqs->at(label) * 100.0;
 			}
 			else
 			{

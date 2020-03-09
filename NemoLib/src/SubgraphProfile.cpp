@@ -60,15 +60,15 @@ unordered_map<std::string, uint64_t> SubgraphProfile::getlabelFreqMap(int subgra
 	return labelFreqMap;
 }
 
-unordered_map <std::string, double> SubgraphProfile::getRelativeFrequencies()
+unordered_map <std::string, double> SubgraphProfile::getRelativeFrequencies() const
 {
 	unordered_map<std::string, double> result(labelVertexFreqMapMap.size());
-	double totalcount = static_cast<double>(getTotalSubgaphCount());
+	auto totalcount = getTotalSubgaphCount();
 
 	for (auto& p : labelVertexFreqMapMap)
 	{
-		double countLabel = get_vector_sum(p.second.begin(), p.second.end(), double{0.0});
-		result[p.first] = countLabel / totalcount;
+		auto countLabel = get_vector_sum(p.second.begin(), p.second.end(), uint64_t{0});
+		result[p.first] = static_cast<double>(countLabel) / static_cast<double>(totalcount);
 	}
 
 	return result;

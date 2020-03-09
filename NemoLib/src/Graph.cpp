@@ -68,7 +68,7 @@ bool Graph::addEdge(vertex vertexA, vertex vertexB)
 
 
 // parses a data file into an adjacency list representing the graph
-void Graph::parse(string filename) 
+void Graph::parse(const string& filename) 
 {
 	std::vector<string> lines;
 	string currentline, from, to;
@@ -128,7 +128,7 @@ void Graph::parse(string filename)
 
 // get index of a node given the node's name
 // create an entry if it does not exist
-vertex Graph::getOrCreateIndex(string nodeName, unordered_map<string, vertex>& nameToIndex) 
+vertex Graph::getOrCreateIndex(const string& nodeName, unordered_map<string, vertex>& nameToIndex) 
 {
 	if (nameToIndex.count(nodeName) == 0) 
 	{ // if the key does not exists      

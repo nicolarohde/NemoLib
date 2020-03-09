@@ -35,7 +35,7 @@ public:
 	}
 
 
-	Graph(std::string filename, bool dir = false) : directed(dir)
+	Graph(const std::string& filename, const bool dir = false) : directed(dir)
 	{ 
 		parse(filename); 
 	};
@@ -76,25 +76,25 @@ public:
 	virtual ~Graph() = default;
 
 
-	inline bool isDirected() noexcept
+	inline bool isDirected() const noexcept
 	{
 		return directed;
 	} // end method 
 
 
-	inline auto& getAdjacencyList(vertex index)
+	inline auto& getAdjacencyList(vertex index) const
 	{
 		return adjacencyLists.at(index);
 	} // end method 
 
 
-	inline auto& getNametoIndex() noexcept
+	inline auto& getNametoIndex() const noexcept
 	{
 		return name2Index;
 	} // end method 
 
 
-	inline auto getIndextoName() noexcept // will be useful if need to match the index to name
+	inline auto getIndextoName() const noexcept // will be useful if need to match the index to name
 	{
 		std::unordered_map<vertex, std::string> Index2name;
 		for (auto v : name2Index)
@@ -106,7 +106,7 @@ public:
 	} // end method 
 
 
-	inline auto& getEdges() // added by following the original ESU program
+	inline auto& getEdges() const // added by following the original ESU program
 	{
 		return edges;
 	} // end method 
@@ -139,7 +139,7 @@ public:
 	}
 
 
-	inline std::size_t getSize() noexcept
+	inline std::size_t getSize() const noexcept
 	{
 		return adjacencyLists.size();
 	} // end method 
@@ -185,8 +185,8 @@ private:
 
 	bool directed;
 
-	void parse(std::string);
-	vertex getOrCreateIndex(std::string, std::unordered_map<std::string, vertex>&);
+	void parse(const std::string&);
+	vertex getOrCreateIndex(const std::string&, std::unordered_map<std::string, vertex>&);
 };
 
 #endif /* __NEMOLIB_GRAPH_HPP */

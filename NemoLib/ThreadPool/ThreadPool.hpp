@@ -3,7 +3,7 @@
 #ifndef __THREAD_POOL_HPP
 #define __THREAD_POOL_HPP
 
-#include <type_traits>	// size_t
+#include <cstddef>      // size_t
 #include <thread>		// thread
 #include <vector>		// vector
 #include <mutex>		// mutex, lock_guard
@@ -16,7 +16,11 @@
 class ThreadPool
 {
 	using Guard_t = std::lock_guard<std::mutex>;
+	static constexpr std::size_t M_MAX_JOB_COUNT = 10000;
+
 public:
+	using Job_t = std::function<void(void)>;
+
 	enum THREAD_SIGNALS
 	{
 		TP_STARTING,
@@ -62,9 +66,9 @@ public:
 		// signal all threads to terminate
 		m_mtx_signals.lock();
 		std::for_each(m_vect_signals.begin(), m_vect_signals.end(),
-			[&](auto& sigterm)
+			[&](auto& thread_signal)
 			{
-				sigterm = THREAD_SIGNALS::TP_SIGTERM;
+				thread_signal = THREAD_SIGNALS::TP_SIGTERM;
 			} // end lambda
 		); // end foreach
 		m_mtx_signals.unlock();
@@ -142,15 +146,65 @@ public:
 
 
 	///<summary>
-	/// Adds the given job <paramref name="fn_job_"/> to the end of the execution queue.
+	/// Forcefully adds the given job <paramref name="fn_job_"/> to the end of the execution queue.
 	///</summary>
 	///<param name="fn_job_">A ready-to-execute job that should be executed.</param>
-	void Add_Job(std::function<void(void)> fn_job_)
+	void Add_Job_Force(Job_t fn_job_)
 	{
 		Guard_t guard(m_mtx_tasks);
 
 		m_q_tasks.push(fn_job_);
 	} // end method Add_Job
+
+
+	///<summary>
+	/// Adds the given job <paramref name="fn_job_"/> to the end of the execution queue.
+	///</summary>
+	///<remarks>
+	/// This function will block if more than the maximum number of jobs are waiting 
+	/// in the execution queue. Use <see="Add_Job_I" /> for non-blocking version.
+	///</remarks>
+	///<param name="fn_job_">A ready-to-execute job that should be executed.</param>
+	void Add_Job(Job_t&& fn_job_)
+	{
+		while (m_q_tasks.size() >= M_MAX_JOB_COUNT)
+		{
+			std::this_thread::yield();
+		} // end while
+
+		{
+			Guard_t guard(m_mtx_tasks);
+			m_q_tasks.push(fn_job_);
+		} // end Guard_t
+	} // end method Add_Job
+
+
+	///<summary>
+	/// Attempts to add the given job <paramref name="fn_job_"/> to the end of the execution 
+	/// queue. If successful, true is returned, otherwise false.
+	///</summary>
+	///<remarks>
+	/// This function will not block if more than the maximum number of jobs are waiting 
+	/// in the execution queue, instead it will return false. Use <see="Add_Job" /> for 
+	/// a blocking version.
+	///</remarks>
+	///<param name="fn_job_">A ready-to-execute job that should be executed.</param>
+	///<returns>True if the job was added, false otherwise.</returns>
+	bool Add_Job_I(Job_t fn_job_)
+	{
+		bool b_out = false;
+		if (m_q_tasks.size() < M_MAX_JOB_COUNT)
+		{
+			{
+				Guard_t guard(m_mtx_tasks);
+				m_q_tasks.push(fn_job_);
+			} // end Guard_t
+			
+			b_out = true;
+		} // end while
+
+		return b_out;		
+	} // end method Add_Job_I
 
 
 	///<summary>
@@ -171,9 +225,9 @@ public:
 		// signal all threads to terminate
 		m_mtx_signals.lock();
 		std::for_each(m_vect_signals.begin(), m_vect_signals.end(),
-			[&](auto& sigterm)
+			[&](auto& thread_signal)
 			{
-				sigterm = THREAD_SIGNALS::TP_SIGTERM;
+				thread_signal = THREAD_SIGNALS::TP_SIGTERM;
 			} // end lambda
 		); // end foreach
 		m_mtx_signals.unlock();
@@ -359,11 +413,11 @@ protected:
 	///</summary>
 	///<param name="ku_li_MY_ID_">The id of the calling thread within the thread pool.</param>
 	///<returns>A callable function object that the thread should execute.</returns>
-	std::function<void(void)> get_work(const std::size_t ku_li_MY_ID_)
+	Job_t get_work(const std::size_t ku_li_MY_ID_)
 	{
 		Guard_t guard(m_mtx_tasks);
 
-		std::function<void(void)> job;
+		Job_t job;
 
 		if (m_q_tasks.empty() == false)
 		{
@@ -402,7 +456,7 @@ private:
 	mutable std::mutex m_mtx_signals;                    //! mutex protecting the signals vector
 	mutable std::mutex m_mtx_exception;                  //! mutex protecting the exception queue
 
-	std::queue<std::function<void(void)>> m_q_tasks;     //! queue storing tasks waiting for execution
+	std::queue<Job_t> m_q_tasks;     //! queue storing tasks waiting for execution
 	std::queue<std::exception_ptr>        m_q_exception; //! queue storing exceptions that occurred during execution of past jobs
 
 }; // end class ThreadPool

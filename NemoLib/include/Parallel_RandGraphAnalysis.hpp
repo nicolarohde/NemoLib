@@ -8,9 +8,11 @@
       
 #include "Config.hpp"               // configuration defines
 #include "SubgraphCount.hpp"        // SubgraphCount
-#include "RandESU.hpp"              // RandESU
+//#include "RandESU.hpp"              // RandESU
+#include "ESU_Parallel.hpp"
 #include "ThreadPool.hpp"           // ThreadPool
 #include "RandomGraphGenerator.hpp" // RandomGraphGenerator
+#include "Logger.hpp"
 
 namespace Parallel_Analysis
 {
@@ -43,30 +45,24 @@ std::unordered_map<std::string, std::vector<double>> analyze(AnalyzeArgPack& arg
 		std::unordered_map<std::string, std::vector<double>> labelRelFreqsMap;
 		std::vector<SubgraphCount> all_subgraphs(args.mu_li_graph_count);
 
-		args.m_tp_pool->Start_All_Threads();
-
-		//std::cout << "Creating jobs for random analysis ..." << std::endl;
-
 		for (std::size_t i{0}; i < args.mu_li_graph_count; i++)
 		{
-			args.m_tp_pool->Add_Job(
-				[&args, &all_subgraphs, i](void) 
-				{
-					// generate random graphs
-					Graph randomGraph = std::move(RandomGraphGenerator::generate(args.m_graph_target));
-					SubgraphEnumerationResult* my_subgraphs = dynamic_cast<SubgraphEnumerationResult*>(&all_subgraphs[i]);
-					int my_size = static_cast<int>(args.mu_li_subgraph_size);
+			if (0 == i % 10) {Logger() << "Working on random graph " << i + 1 << "/" << args.mu_li_graph_count << std::endl;}
 
-					RandESU::enumerate(randomGraph, my_subgraphs, my_size, args.m_vectd_probabilities, args.m_str_labelg_path);
-				} // end lambda
-			); // end Add_Job
+			//{Logger() << "Test 1" << std::endl;}
+
+			// generate random graphs
+			Graph randomGraph = std::move(RandomGraphGenerator::generate(args.m_graph_target));
+			// SubgraphCount* my_subgraphs = &all_subgraphs[i];
+			// int my_size = static_cast<int>(args.mu_li_subgraph_size);
+
+			//{Logger() << "Got random graph ..." << std::endl;}
+
+			//RandESU::enumerate<SubgraphCount>(randomGraph, my_subgraphs, my_size, args.m_vectd_probabilities, args.m_str_labelg_path);
+			ESU_Parallel::enumerate<SubgraphCount>(randomGraph, &all_subgraphs[i], static_cast<int>(args.mu_li_subgraph_size), args.m_tp_pool, args.m_str_labelg_path);
 		} // end for i
 
-		//std::cout << "Waiting for jobs to finish ..." << std::endl;
-
-		args.m_tp_pool->Synchronize();
-
-		//std::cout << "Jobs completed!" << std::endl;
+		{Logger() << "Merging results ..." << std::endl;}
 
 		for (auto& subgraphCount : all_subgraphs)
 		{
@@ -75,8 +71,9 @@ std::unordered_map<std::string, std::vector<double>> analyze(AnalyzeArgPack& arg
 			// populate labelRelReqsMap with result
 			for (const auto& p : curLabelRelFreqMap)
 			{
-				labelRelFreqsMap[p.first].reserve(args.mu_li_graph_count);
-				labelRelFreqsMap[p.first].push_back(p.second);
+				auto* v = &labelRelFreqsMap[p.first];
+				v->reserve(args.mu_li_graph_count);
+				v->push_back(p.second);
 			} // end for p
 		} // end for subgraphCount
 
@@ -84,9 +81,9 @@ std::unordered_map<std::string, std::vector<double>> analyze(AnalyzeArgPack& arg
 		// ensure non-detection is accounted for.
 		for (auto& p : labelRelFreqsMap)
 		{
-			while (p.second.size() < args.mu_li_graph_count)
+			if (p.second.size() < args.mu_li_graph_count)
 			{
-				p.second.push_back(0.0);
+				p.second.resize(args.mu_li_graph_count, 0.0);
 			} // end while
 		} // end for p
 

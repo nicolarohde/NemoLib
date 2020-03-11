@@ -14,6 +14,7 @@
 #include "RandomGraphGenerator.hpp"	// class header
 #include "Utility.hpp"				// RNG_provider, get_random_in_range, get_vector_sum
 #include <algorithm>				// shuffle
+#include "Logger.hpp"
 
 using std::shuffle;
 using std::vector;
@@ -21,12 +22,18 @@ using std::vector;
 
 Graph RandomGraphGenerator::generate(const Graph& inputGraph)
 {
+	put_time_stamp(std::cerr) << "In RandomGraphGenerator::generate ... " << std::endl;
+
 	vector<int> degreeSeq = std::move(getDegreeSequenceVector(inputGraph));
 	vector<vertex> vertexList;
 	Graph randomGraph(inputGraph.isDirected());
 
+	//put_time_stamp(std::cerr) << "Setup complete" << std::endl;
+
 	// reserve memory for all vertices
 	vertexList.reserve(get_vector_sum(degreeSeq.begin(), degreeSeq.end()));
+
+	//put_time_stamp(std::cerr) << "Reserved memory for vertices" << std::endl;
 
 	// generate randomized list of vertices
 	// the vertexList is a set where each node is represented by a number
@@ -40,13 +47,27 @@ Graph RandomGraphGenerator::generate(const Graph& inputGraph)
 		} // end for degree
 	} // end for vertex
 
+	//put_time_stamp(std::cerr) << "Graph vertexList creation complete" << std::endl;
+
 	shuffle(vertexList.begin(), vertexList.end(), RNG_provider());
+
+	//put_time_stamp(std::cerr) << "Graph vertexList shuffle complete" << std::endl;
+
+	std::size_t count{1};
 
 	// create edges
 	while (!vertexList.empty())
 	{
-		std::size_t u = get_random_in_range<std::size_t>(0ULL, vertexList.size() - 1ULL);
-		std::size_t v = get_random_in_range<std::size_t>(0ULL, vertexList.size() - 1ULL);
+		count ++;
+		auto n_vertices = vertexList.size();
+
+		//if (0 == count % 10000) 
+		//{ 
+		//	put_time_stamp(std::cerr) << "On " << count << " loop of randomization (at least " << n_vertices / 2 << " remaining)." << std::endl; 
+		//}
+
+		std::size_t u = get_random_in_range<std::size_t>(0ULL, n_vertices - 1ULL);
+		std::size_t v = get_random_in_range<std::size_t>(0ULL, n_vertices - 1ULL);
 
 		// this avoids looping for a long time when only a few values
 		// the first case will not work if u = v = vertexList.size() - 1
@@ -54,9 +75,11 @@ Graph RandomGraphGenerator::generate(const Graph& inputGraph)
 		// we force these two cases into the other case
 		if (u == v)
 		{
-			if ((get_random_in_range<std::size_t>(0ULL, 1ULL) % 2ULL == 0ULL && u < (vertexList.size() - 1ULL)) || v == 0ULL)
+			//put_time_stamp(std::cerr) << "u == v case" << std::endl;
+
+			if ((get_random_in_range<std::size_t>(0ULL, 1ULL) % 2ULL == 0ULL && u < (n_vertices - 1ULL)) || v == 0ULL)
 			{
-				v = get_random_in_range<std::size_t>(u + 1ULL, vertexList.size() - 1ULL);
+				v = get_random_in_range<std::size_t>(u + 1ULL, n_vertices - 1ULL);
 			} // end if
 			else
 			{
@@ -79,6 +102,8 @@ Graph RandomGraphGenerator::generate(const Graph& inputGraph)
 
 		randomGraph.addEdge(edgeVertexU, edgeVertexV);
 	} // end while
+
+	put_time_stamp(std::cerr) << "Random graph creation done, iterations of loop: " << count << std::endl;
 
 	return randomGraph;
 } // end method generate

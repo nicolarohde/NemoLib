@@ -8,11 +8,13 @@
 #include <queue>              // queue
 #include <thread>             // thread
 #include <unordered_map>      // unordered_map
+#include <iterator>           // make_move_iterator
 
 #include "Subgraph.hpp"       // Subgraph
 #include "NautyLink.hpp"      // NautyLink
 #include "SubgraphCount.hpp"  // SubgraphCount
 #include "Stats.hpp"          // stats_data, getPValue
+#include "Logger.hpp"
 
 
 class SubgraphCollection : public SubgraphCount
@@ -76,7 +78,7 @@ public:
         } // end if
         else if (false == m_queue_write_nemo.empty())
         {
-            std::cerr << "SubgraphCollection destructor invoked with non-empty network motif buffer. Did you forget to call write_nemo_collection?" << std::endl;
+            put_time_stamp(std::cerr) << "SubgraphCollection destructor invoked with non-empty network motif buffer. Did you forget to call write_nemo_collection?" << std::endl;
         } // end elif
 
         if(true == m_thread_write_subgraph_thread.joinable())
@@ -85,7 +87,7 @@ public:
         } // end if
         else if (false == m_queue_write_nemo.empty())
         {
-            std::cerr << "SubgraphCollection destructor invoked with non-empty subgraph buffer. Did you forget to call write_subgraph_collection?" << std::endl;
+            put_time_stamp(std::cerr) << "SubgraphCollection destructor invoked with non-empty subgraph buffer. Did you forget to call write_subgraph_collection?" << std::endl;
         } // end elif
     } // end Destructor
 
@@ -96,20 +98,18 @@ public:
       */
 	void add(Subgraph& currentSubgraph, NautyLink& nautylink) override
 	{
-        //std::cerr << "In SubgraphCollection::add " << std::endl;
-
+        //put_time_stamp(std::cerr) << " [Thread: " << std::this_thread::get_id() << "]: " << "In SubgraphCollection::add " << std::endl;
+        // {Logger() << "[Thread: " << std::this_thread::get_id() << "]: " << "In SubgraphCollection::add " << std::endl;}
+        
         std::string label = nautylink.nautylabel_helper(currentSubgraph);
 
-        //std::cerr << "Got label: " << label << std::endl;
+        //put_time_stamp(std::cerr) << " [Thread: " << std::this_thread::get_id() << "]: " << "Got label: " << label << std::endl;
+        // {Logger() << "[Thread: " << std::this_thread::get_id() << "]: " <<"Got label: " << label << std::endl;}
 
         // delegate to base class for frequencies
 		SubgraphCount::add(currentSubgraph, nautylink, label);
 
-        //std::cerr << "labelToSubgraph length before: " << labelToSubgraph.size() << std::endl;
-
-		labelToSubgraph[label].push_back(currentSubgraph);
-
-        //std::cerr << "labelToSubgraph length after: " << labelToSubgraph.size() << std::endl;
+        add_label2Subgraph(label, currentSubgraph);
 
         if (true == m_b_generate_subgraph_collection)
         {
@@ -119,6 +119,21 @@ public:
 	} // end method add
 
 
+    void add_label2Subgraph(const std::string& label, const Subgraph& currentSubgraph)
+    { 
+        std::lock_guard<std::mutex> my_guard(m_mtx_label_subgraph_map);
+        //put_time_stamp(std::cerr) << " [Thread: " << std::this_thread::get_id() << "]: " << "Aquried labelToSubgraph lock, current size: " << labelToSubgraph.size() << std::endl;
+        //{Logger() << "[Thread: " << std::this_thread::get_id() << "]: " << "Aquried labelToSubgraph lock, current size: " << labelToSubgraph.size() << std::endl;}
+
+        labelToSubgraph[label].push_back(currentSubgraph);
+
+        //put_time_stamp(std::cerr) << " [Thread: " << std::this_thread::get_id() << "]: " << "labelToSubgraph size after adding: " << labelToSubgraph.size() << std::endl;
+        //{Logger() << "[Thread: " << std::this_thread::get_id() << "]: " << "labelToSubgraph size after adding: " << labelToSubgraph.size() << std::endl;}
+        //put_time_stamp(std::cerr) << " [Thread: " << std::this_thread::get_id() << "]: " << "releasing labelToSubgraph lock " << labelToSubgraph.size() << std::endl;
+        //{Logger() << "[Thread: " << std::this_thread::get_id() << "]: " << "releasing labelToSubgraph lock " << labelToSubgraph.size() << std::endl;}
+    } // end add_label2Subgraph
+
+
     /** @brief Finds and adds all network motifs with p-value <= 0.05 to the nemo buffer.
       *        The buffer is only written to the file once write_nemo_collection is invoked
       *        or flush is called, in which case subgraphs may also be written (if collected). 
@@ -126,16 +141,16 @@ public:
       */
     void find_network_motifs(const Statistical_Analysis::stats_data& data)
     {
-        //std::cerr << "Size of labelToSubgraph is: " << labelToSubgraph.size() << std::endl;
+        //put_time_stamp(std::cerr) << "Size of labelToSubgraph is: " << labelToSubgraph.size() << std::endl;
 
         for (const auto& p : labelToSubgraph)
 		{
-            //std::cerr << "Calculating p value for label " << p.first << " ..." << std::endl;
+            //put_time_stamp(std::cerr) << "Calculating p value for label " << p.first << " ..." << std::endl;
 
 			if (Statistical_Analysis::getPValue(p.first, data) <= 0.05)
 			{
-                //std::cerr << "The label " << p.first << " has p value less than or equal to 0.05" << std::endl;
-                //std::cerr << "Adding " << p.second.size() << " motifs to queue" << std::endl;
+                //put_time_stamp(std::cerr) << "The label " << p.first << " has p value less than or equal to 0.05" << std::endl;
+                //put_time_stamp(std::cerr) << "Adding " << p.second.size() << " motifs to queue" << std::endl;
 
                 std::lock_guard<std::mutex> guard(m_mtx_write_nemo_q);
 
@@ -261,7 +276,7 @@ public:
 			{
                 auto* v = &labelToSubgraph[p.first];
                 v->reserve(v->size() + p.second.size());
-				v->insert(v->end(), p.second.begin(), p.second.end());
+				v->insert(v->end(), std::make_move_iterator(p.second.begin()), std::make_move_iterator(p.second.end()));
 			}
 		}
 
@@ -321,7 +336,9 @@ protected:
     //! protects subgraph queue
     mutable std::mutex m_mtx_write_subgraph_q;    
     //! protects nemo queue
-    mutable std::mutex m_mtx_write_nemo_q;            
+    mutable std::mutex m_mtx_write_nemo_q;
+    //! protects labelToSubgraph map
+    mutable std::mutex m_mtx_label_subgraph_map;
     
     //! buffer for subgraphs to be written to the file
     std::queue<std::string> m_queue_write_subgraph;   

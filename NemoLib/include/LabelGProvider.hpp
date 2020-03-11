@@ -99,13 +99,15 @@ private:
                 else
                 {
                     std::string cmd = m_str_labelg_path;
-                    cmd += " ";
+                    cmd += " \"";
                     cmd += job.first;
+                    cmd += "\"";
 
                     FILE* fp;
                     const int sizebuf = 64;
                     char buff[sizebuf];
                     auto out = std::vector<std::string>();
+
                     if ((fp = popen (cmd.c_str(), "r")) == NULL)
                     {
                         std::cerr << "call to popen failed!" << std::endl;

@@ -7,6 +7,8 @@
 #include <random>     // random_device, mt19937, uniform_int_distribution, uniform_real_distribution
 #include <numeric>    // accumulate
 #include <chrono>     // high_resolution_clock, duration_cast
+#include <ctime>      // localtime
+#include <iomanip>    // put_time
 
 
 // Typedefs to make the clock and timepoint names shorter
@@ -72,6 +74,20 @@ inline double chrono_duration(T start, T end)
 {
 	return static_cast<double>(std::chrono::duration_cast<D>(end - start).count());
 } // end template chrono_duration
+
+
+inline std::ostream& put_time_stamp(std::ostream& out)
+{
+	auto current_time = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+	out << "[" << std::put_time(std::localtime(&current_time), "%F %T") << "]: ";
+	return out;
+} // end method put_time_stamp
+
+
+inline void log_message(std::ostream& out, const std::string& msg)
+{
+	put_time_stamp(out) << msg << std::endl;
+} // end method log_message
 
 
 #endif

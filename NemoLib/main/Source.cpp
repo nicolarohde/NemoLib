@@ -7,6 +7,7 @@
 #include <chrono>
 #include <string>
 #include <iostream>
+#include "Logger.hpp"
 
 #if _USE_THREAD_POOL
 	#include <ThreadPool.hpp>
@@ -81,16 +82,19 @@ int main(int argc, char** argv)
 
 	Graph targetg(filename, false);
 
-	std::cout << "Enumerating graph ..." << std::endl;
+	{Logger() << "Enumerating graph ..." << std::endl;}
 
 #if _USE_THREAD_POOL
 	ESU_Parallel::enumerate<SubgraphCount>(targetg, &subc, static_cast<int>(motifSize), &my_pool, labelg_path);
 #else
 	ESU::enumerate(targetg, dynamic_cast<SubgraphEnumerationResult*>(&subc), static_cast<int>(motifSize));
 #endif
+
+	{Logger() << "Done Enumerating. Getting relative frequencies ..." << std::endl;}
+
 	unordered_map<std::string, double> targetLabelRelFreqMap(std::move(subc.getRelativeFrequencies()));
 
-	cout << "Analyzing random graphs..." << endl << endl;
+	{Logger() << "Analyzing random graphs..." << endl << endl;}
 
 #if _USE_THREAD_POOL
 
@@ -107,16 +111,16 @@ int main(int argc, char** argv)
 	unordered_map<graph64, vector<double>> randLabelRelFreqsMap = std::move(RandomGraphAnalysis::analyze(targetg, randomCount, motifSize, probs));
 #endif
 
-	cout << "Comparing target graph to random graphs ... " << endl << endl;
+	{Logger() << "Comparing target graph to random graphs ... " << endl << endl;}
 
 	Statistical_Analysis::stats_data data{&targetLabelRelFreqMap, &randLabelRelFreqsMap, randomCount};
 
 	auto end = _Clock::now();
 
-	cout << endl << data << endl;
+	{Logger() << endl << data << endl;}
 
-	cout << "Time = " << chrono_duration<milliseconds, decltype(begin)>(begin, end) << " milliseconds." << endl;
-	cout << "Time = " << chrono_duration<seconds, decltype(begin)>(begin, end) << " seconds." << endl;
+	{Logger() << "Time = " << chrono_duration<milliseconds, decltype(begin)>(begin, end) << " milliseconds." << endl;}
+	{Logger() << "Time = " << chrono_duration<seconds, decltype(begin)>(begin, end) << " seconds." << endl;}
 
 	return (EXIT_SUCCESS);
 }

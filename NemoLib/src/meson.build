@@ -1,7 +1,7 @@
 nemolib_sources = [
     'Graph.cpp',
     'NautyLink.cpp',
-    'RandESU.cpp',
+    #'RandESU.cpp',
     'RandomGraphAnalysis.cpp',
     'RandomGraphGenerator.cpp',
     'SubgraphProfile.cpp'

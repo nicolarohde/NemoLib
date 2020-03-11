@@ -59,7 +59,7 @@ unordered_map <std::string, vector<double>> RandomGraphAnalysis::analyze(Graph& 
 
 		// enumerate random graphs
 		SubgraphCount subgraphCount;
-		RandESU::enumerate(randomGraph, &subgraphCount, subgraphSize, probs, labelg_path);
+		RandESU::enumerate<SubgraphCount>(randomGraph, &subgraphCount, subgraphSize, probs, labelg_path);
 		unordered_map<std::string, double> curLabelRelFreqMap = std::move(subgraphCount.getRelativeFrequencies());
 
 		// populate labelRelReqsMap with result

@@ -18,7 +18,8 @@
 	#define MAXN 64
 #endif
 
-#include <unordered_map>
+#include <unordered_map>  // unordered_map
+#include <future>         // packaged_task, future
 
 #include "LabelGProvider.hpp"
 #include "Config.hpp"

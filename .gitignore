@@ -12,3 +12,7 @@ Release/
 *.aps
 rand_graph/
 labelg
+*.o
+*.a
+*.ans
+*.dre

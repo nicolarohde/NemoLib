@@ -8,7 +8,7 @@
 #include <iostream>
 
 #if _USE_THREAD_POOL
-	#include <ThreadPool.hpp>
+	#include "ThreadPool.hpp"
 	#include "ESU_Parallel.hpp"
 	#include "Parallel_RandGraphAnalysis.hpp"
 #else
@@ -48,16 +48,16 @@ void display_help(string _name)
 	std::cout << "\t\t[# random graphs] -- number of random graphs to use for ESU." << std::endl;
 	std::cout << "\t\t[labelg path]     -- path to the special labelg binary." << std::endl;
 	std::cout << "\t\t[nemo path]       -- path where to store the nemo collection." << std::endl;
-	std::cout << "\t\t[--h | --help]    -- use instead of [file path] to display this help menu." << std::endl;
+	std::cout << "\t\t[-h | --help]     -- use instead of [file path] to display this help menu." << std::endl;
 } // end method display_help
 
 
 int main(int argc, char** argv)
 {
-	if(argc > 1 && (string(argv[1]) == "-h" || string(argv[1]) == "--help"))
+	if(argc == 1 || (argc > 1 && (string(argv[1]) == "-h" || string(argv[1]) == "--help")))
 	{
 		display_help(argv[0]);
-		return 0;
+		return argc == 1;
 	} // end if
 
 	const string filename = argc > 1 ? argv[1] : "./test/exampleGraph.txt";

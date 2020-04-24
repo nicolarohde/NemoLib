@@ -10,7 +10,7 @@
 #include "Logger.hpp"
 
 #if _USE_THREAD_POOL
-	#include <ThreadPool.hpp>
+	#include "ThreadPool.hpp"
 	#include "ESU_Parallel.hpp"
 	#include "Parallel_RandGraphAnalysis.hpp"
 #else
@@ -43,21 +43,22 @@ void printmap(const T& _map)
 void display_help(string _name)
 {
 	std::cout << "Usage:" << std::endl;
-	std::cout << "\t" << _name << " [file path] [# threads] [motif size] [# random graphs]" << std::endl;
+	std::cout << "\t" << _name << " [file path] [# threads] [motif size] [# random graphs] [labelg path]" << std::endl;
 	std::cout << "\t\t[file path]       -- complete or relative path to graph (g6 or d6 formatted) file." << std::endl;
 	std::cout << "\t\t[# threads]       -- number of threads to use (ignored for sequential nemolib)." << std::endl;
 	std::cout << "\t\t[motif size]      -- size of motif to search for." << std::endl;
 	std::cout << "\t\t[# random graphs] -- number of random graphs to use for ESU." << std::endl;
-	std::cout << "\t\t[--h | --help]    -- use instead of [file path] to display this help menu." << std::endl;
+	std::cout << "\t\t[labelg path]     -- path to the labelg program to use." << std::endl;
+	std::cout << "\t\t[-h | --help]     -- use instead of [file path] to display this help menu." << std::endl;
 } // end method display_help
 
 
 int main(int argc, char** argv)
 {
-	if(argc > 1 && (string(argv[1]) == "--h" || string(argv[1]) == "--help"))
+    if(argc == 1 || (argc > 1 && (string(argv[1]) == "-h" || string(argv[1]) == "--help")))
 	{
 		display_help(argv[0]);
-		return 0;
+		return argc == 1;
 	} // end if
 
 	const string filename = argc > 1 ? argv[1] : "./test/exampleGraph.txt";

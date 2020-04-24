@@ -34,8 +34,7 @@ namespace Parallel_Analysis
 		const std::string& m_str_labelg_path;
 	};
 
-//	std::unordered_map<std::string, std::vector<double>> analyze(const Graph& targetGraph, const std::size_t randomGraphCount, const std::size_t subgraphSize, 
-//	                                                             const std::vector<double>& probs, ThreadPool* my_pool, const std::string& labelg_path)
+
 std::unordered_map<std::string, std::vector<double>> analyze(AnalyzeArgPack& args)
 	{
 		// create the return map and fill it with the labels we found in the
@@ -49,16 +48,9 @@ std::unordered_map<std::string, std::vector<double>> analyze(AnalyzeArgPack& arg
 		{
 			if (0 == i % 10) {Logger() << "Working on random graph " << i + 1 << "/" << args.mu_li_graph_count << std::endl;}
 
-			//{Logger() << "Test 1" << std::endl;}
-
-			// generate random graphs
+			// generate random graph
 			Graph randomGraph = std::move(RandomGraphGenerator::generate(args.m_graph_target));
-			// SubgraphCount* my_subgraphs = &all_subgraphs[i];
-			// int my_size = static_cast<int>(args.mu_li_subgraph_size);
 
-			//{Logger() << "Got random graph ..." << std::endl;}
-
-			//RandESU::enumerate<SubgraphCount>(randomGraph, my_subgraphs, my_size, args.m_vectd_probabilities, args.m_str_labelg_path);
 			ESU_Parallel::enumerate<SubgraphCount>(randomGraph, &all_subgraphs[i], static_cast<int>(args.mu_li_subgraph_size), args.m_tp_pool, args.m_str_labelg_path);
 		} // end for i
 

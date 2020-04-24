@@ -47,11 +47,11 @@ Graph RandomGraphGenerator::generate(const Graph& inputGraph)
 		} // end for degree
 	} // end for vertex
 
-	//put_time_stamp(std::cerr) << "Graph vertexList creation complete" << std::endl;
+	put_time_stamp(std::cerr) << "Graph vertexList creation complete" << std::endl;
 
 	shuffle(vertexList.begin(), vertexList.end(), RNG_provider());
 
-	//put_time_stamp(std::cerr) << "Graph vertexList shuffle complete" << std::endl;
+	put_time_stamp(std::cerr) << "Graph vertexList shuffle complete" << std::endl;
 
 	std::size_t count{1};
 
@@ -61,10 +61,10 @@ Graph RandomGraphGenerator::generate(const Graph& inputGraph)
 		count ++;
 		auto n_vertices = vertexList.size();
 
-		//if (0 == count % 10000) 
-		//{ 
-		//	put_time_stamp(std::cerr) << "On " << count << " loop of randomization (at least " << n_vertices / 2 << " remaining)." << std::endl; 
-		//}
+		if (0 == count % 10000) 
+		{ 
+			put_time_stamp(std::cerr) << "On " << count << " loop of randomization (at least " << n_vertices / 2 << " remaining)." << std::endl; 
+		}
 
 		std::size_t u = get_random_in_range<std::size_t>(0ULL, n_vertices - 1ULL);
 		std::size_t v = get_random_in_range<std::size_t>(0ULL, n_vertices - 1ULL);
@@ -75,7 +75,7 @@ Graph RandomGraphGenerator::generate(const Graph& inputGraph)
 		// we force these two cases into the other case
 		if (u == v)
 		{
-			//put_time_stamp(std::cerr) << "u == v case" << std::endl;
+			put_time_stamp(std::cerr) << "u == v case" << std::endl;
 
 			if ((get_random_in_range<std::size_t>(0ULL, 1ULL) % 2ULL == 0ULL && u < (n_vertices - 1ULL)) || v == 0ULL)
 			{

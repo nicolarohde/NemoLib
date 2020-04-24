@@ -49,7 +49,7 @@ public:
 
 	Graph(Graph&& other) noexcept 
 	{ 
-		*this = other;
+		*this = std::move(other);
 	}
 
 

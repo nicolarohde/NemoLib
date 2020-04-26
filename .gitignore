@@ -10,9 +10,11 @@ release/
 debug/
 Release/
 *.aps
+subprojects/
 rand_graph/
 labelg
 *.o
 *.a
 *.ans
 *.dre
+!subprojects/*.wrap

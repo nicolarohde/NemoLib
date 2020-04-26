@@ -17,26 +17,22 @@
 #include <cstring>
 #include <string>
 
+#include "loguru.hpp"
+
 #include "Global.hpp"
 #include "NautyLink.hpp"
 
 
 std::string NautyLink::nautylabel_helper(Subgraph& subgraph)
 {
-	//std::cerr << "In nautylabel helper ..." << std::endl;
+    DLOG_F(INFO, "In nautylabel helper ...");
 
 	// get the node(index) list from subgraph
 	std::size_t subsize = subgraph.getSize();
 	std::size_t n_chars{0};
 	std::vector<char> vect_label;
 
-	char** adj_matrix = new char*[subsize];
-
-	for (std::size_t i{0}; i < subsize; i++)
-	{
-		adj_matrix[i] = new char[subsize];
-		memset(adj_matrix[i], 0, subsize);
-	}
+    std::vector<std::vector<bool>> vect_adj_matrix{subsize, std::vector<bool>(subsize, false)};
 
 	// undirected only needs half the matrix
 	if (directed == false)
@@ -58,7 +54,7 @@ std::string NautyLink::nautylabel_helper(Subgraph& subgraph)
 	vect_label[0] = static_cast<char>(63 + subsize);
 
 	// get adjacency for R(x)
-	getAdjacency(subgraph, adj_matrix);
+	getAdjacency(subgraph, vect_adj_matrix);
 
 	// index currently being processed (0 is N(n) so start at 1)
 	std::size_t current_index{1};
@@ -69,7 +65,7 @@ std::string NautyLink::nautylabel_helper(Subgraph& subgraph)
 	{
 		for (auto j = directed ? std::size_t {0} : std::size_t {i+1}; j < subsize; j++)
 		{
-			if (adj_matrix[i][j] == '1')
+			if (true == vect_adj_matrix[i][j])
 			{
 				vect_label[current_index] += static_cast<char>(static_cast<int>(std::pow(2, 5 - counter)));
 			}
@@ -92,34 +88,27 @@ std::string NautyLink::nautylabel_helper(Subgraph& subgraph)
 		} // end lambda
 	);// end callback
 
-	//std::cerr << "Getting ready to get the label for " << my_label << "..." << std::endl;
+    DLOG_F(DEBUG_LEVEL, "Getting ready to get the label for %s ...", my_label);
 
 	auto my_future = callback.get_future();
 
 	// we have to wrap the callback as it can't be copied
 	m_lgp_cannonical_labeler.add_job(my_label, [&](std::string s){callback(s);});
 
-	//std::cerr << "Waiting for label, deleting memory ..." << std::endl;
-
-	for (std::size_t i{0}; i < subsize; i++)
-	{
-		delete[] adj_matrix[i];
-	}
-
-	//std::cerr << "Done deleting, waiting ..." << std::endl;
+    DLOG_F(DEBUG_LEVEL, "Waiting for label ...");
 
 	my_future.wait();
 
-	//std::cerr << "Labeling done, retrieving future ..." << std::endl;
+    DLOG_F(DEBUG_LEVEL, "Labeling done, retrieving future ...");
 
 	std::string str_cannonical_lbl = my_future.get();
 
-	//std::cerr << "G6 label " << my_label << " has cannonical label " << str_cannonical_lbl << std::endl;
+    DLOG_F(DEBUG_LEVEL, "G6 label %s has cannonical label %s", my_label, str_cannonical_lbl);
 
 	return str_cannonical_lbl;
 }
 
-void NautyLink::getAdjacency(Subgraph& subgraph, char** matrix)
+void NautyLink::getAdjacency(Subgraph& subgraph, std::vector<std::vector<bool>>& matrix)
 {
 	std::size_t subsize = subgraph.getSize();
 
@@ -139,7 +128,7 @@ void NautyLink::getAdjacency(Subgraph& subgraph, char** matrix)
 					edgetype ec = edges[e_check];
 					if (((uc < vc) && (ec == DIR_U_T_V)) || ((uc > vc) && (ec == DIR_V_T_U)) || ec == UNDIR_U_V)
 					{
-						matrix[i][j] = '1';
+						matrix[i][j] = true;
 					} // end if
 				} // end if (edges.count(e_check) > 0)
 			} // end if (i != j)

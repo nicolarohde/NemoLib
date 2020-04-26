@@ -6,7 +6,7 @@ help:
 	Use 'clean' target to delete the debug and release directories\n"
 
 debug:
-	meson build 
+	meson debug --buildtype=debugoptimized
 	cd build && ninja
 	cd build/main && ln -s ../../test
 

@@ -26,4 +26,12 @@
 		#define _C17_EXECUTION_AVAILABLE 0
 	#endif
 
+    #ifndef DEBUG_LEVEL
+        #if NDEBUG
+            #define DEBUG_LEVEL 4
+        #else
+            #define DEBUG_LEVEL 0
+        #endif
+    #endif
+
 #endif // end __NEMO_CONFIG

@@ -24,6 +24,9 @@
 #include "Graph.hpp"
 #include "RandomGraphGenerator.hpp"
 #include "RandESU.hpp"
+
+#include "loguru.hpp"
+
 using std::vector;
 using std::unordered_map;
 
@@ -48,11 +51,7 @@ unordered_map <std::string, vector<double>> RandomGraphAnalysis::analyze(Graph& 
 	unordered_map<std::string, vector<double>> labelRelFreqsMap;
 	for (int i = 0; i < randomGraphCount; i++)
 	{
-		//display status for every 100th graph
-		if (i % 100 == 0)
-		{
-			std::cout << "Analyzing random graph " << i + 1 << "..." << std::endl;
-		}
+        LOG_F(INFO, "Analyzing random graph %i", i + 1);
 
 		//generate random graphs
 		Graph randomGraph = std::move(RandomGraphGenerator::generate(targetGraph));

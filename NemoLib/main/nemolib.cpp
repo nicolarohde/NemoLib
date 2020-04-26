@@ -7,16 +7,12 @@
 #include <chrono>
 #include <string>
 #include <iostream>
-#include "Logger.hpp"
 
-#if _USE_THREAD_POOL
-	#include "ThreadPool.hpp"
-	#include "ESU_Parallel.hpp"
-	#include "Parallel_RandGraphAnalysis.hpp"
-#else
-	#include "ESU.hpp"
-	#include "RandomGraphAnalysis.hpp"
-#endif
+#include "loguru.hpp"
+
+#include "ThreadPool.hpp"
+#include "ESU_Parallel.hpp"
+#include "Parallel_RandGraphAnalysis.hpp"
 
 
 using std::unordered_map;
@@ -26,18 +22,6 @@ using std::cout;
 using std::endl;
 using std::chrono::seconds;
 using std::chrono::milliseconds;
-
-
-/*
- * Simple C++ Test Suite
- */
-
-template<typename T>
-void printmap(const T& _map)
-{
-	for (const auto& p : _map)
-		cout << p.first << " => " << p.second << endl;
-}
 
 
 void display_help(string _name)
@@ -55,11 +39,15 @@ void display_help(string _name)
 
 int main(int argc, char** argv)
 {
-    if(argc == 1 || (argc > 1 && (string(argv[1]) == "-h" || string(argv[1]) == "--help")))
+    if(argc > 6 || (argc > 1 && (string(argv[1]) == "-h" || string(argv[1]) == "--help")))
 	{
 		display_help(argv[0]);
-		return argc == 1;
+		return argc > 6;
 	} // end if
+
+    // turn on logging 
+    // -v option can be used to change verbosity
+    loguru::init(argc, argv);
 
 	const string filename = argc > 1 ? argv[1] : "./test/exampleGraph.txt";
 	const std::size_t n_threads = argc > 2 ? atoi(argv[2]) : 16;
@@ -71,33 +59,26 @@ int main(int argc, char** argv)
 	vector<double> probs(motifSize - 2, 1.0);
 	probs.insert(probs.end(), { 0.5, 0.5 });
 
-#if _USE_THREAD_POOL
 	// initialize thread pool
 	ThreadPool my_pool(n_threads);
 
 	// alert all threads to start
 	my_pool.Start_All_Threads();
-#endif
 
 	auto begin = _Clock::now();
 
 	Graph targetg(filename, false);
 
-	{Logger() << "Enumerating graph ..." << std::endl;}
+    LOG_F(INFO, "Enumerating graph ...");
 
-#if _USE_THREAD_POOL
 	ESU_Parallel::enumerate<SubgraphCount>(targetg, &subc, static_cast<int>(motifSize), &my_pool, labelg_path);
-#else
-	ESU::enumerate(targetg, dynamic_cast<SubgraphEnumerationResult*>(&subc), static_cast<int>(motifSize));
-#endif
 
-	{Logger() << "Done Enumerating. Getting relative frequencies ..." << std::endl;}
+    LOG_F(INFO, "Done Enumerating. Getting relative frequencies ...");
 
 	unordered_map<std::string, double> targetLabelRelFreqMap(std::move(subc.getRelativeFrequencies()));
 
-	{Logger() << "Analyzing random graphs..." << endl << endl;}
+    LOG_F(INFO, "Analyzing random graphs...\n");
 
-#if _USE_THREAD_POOL
 
 	Parallel_Analysis::AnalyzeArgPack analyze_args
 	(
@@ -106,22 +87,17 @@ int main(int argc, char** argv)
 
 	auto randLabelRelFreqsMap = std::move(Parallel_Analysis::analyze(analyze_args));
 	
-	// alert all threads to terminate to save resources
+	// alert all threads to terminate
 	my_pool.Kill_All();
-#else
-	unordered_map<graph64, vector<double>> randLabelRelFreqsMap = std::move(RandomGraphAnalysis::analyze(targetg, randomCount, motifSize, probs));
-#endif
 
-	{Logger() << "Comparing target graph to random graphs ... " << endl << endl;}
+    LOG_F(INFO, "Comparing target graph to random graphs ...\n");
 
 	Statistical_Analysis::stats_data data{&targetLabelRelFreqMap, &randLabelRelFreqsMap, randomCount};
 
 	auto end = _Clock::now();
 
-	{Logger() << endl << data << endl;}
+	cout << endl << data << endl;
 
-	{Logger() << "Time = " << chrono_duration<milliseconds, decltype(begin)>(begin, end) << " milliseconds." << endl;}
-	{Logger() << "Time = " << chrono_duration<seconds, decltype(begin)>(begin, end) << " seconds." << endl;}
-
-	return (EXIT_SUCCESS);
-}
+    LOG_F(INFO, "Time = %f.4 milliseconds", chrono_duration<milliseconds>(begin, end));
+    LOG_F(INFO, "Time = %f.4 seconds", chrono_duration<seconds>(begin, end));
+} // end Main

@@ -1,5 +1,5 @@
 
-test_bin = executable(
+nemolib_bin = executable(
     'nemolib', 
     'nemolib.cpp',
     include_directories: [
@@ -8,11 +8,12 @@ test_bin = executable(
     ],
     dependencies: [
         thread_dep, 
-        nemolib_dep
+        nemolib_dep,
+        loguru_dep
     ]
 )
 
-cli_bin = executable(
+nemocollection_bin = executable(
     'nemocollection', 
     'nemocollection.cpp',
     include_directories: [
@@ -21,6 +22,7 @@ cli_bin = executable(
     ],
     dependencies: [
         thread_dep, 
-        nemolib_dep
+        nemolib_dep,
+        loguru_dep
     ]
 )

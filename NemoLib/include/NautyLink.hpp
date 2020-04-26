@@ -41,7 +41,8 @@ public:
     virtual ~NautyLink() = default;
     void nautyinit();
 
-    void getAdjacency(Subgraph&, char**);
+    void getAdjacency(Subgraph& subgraph, std::vector<std::vector<bool>>& matrix);
+
 
     std::string nautylabel_helper(Subgraph&);
 

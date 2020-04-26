@@ -11,12 +11,17 @@ nemolib_inc = [
     inc_tp
 ]
 
+nemolib_dependencies = [
+    thread_dep,
+    loguru_dep
+]
+
 nemolib_lib = library(
     'nemolib',
     nemolib_sources,
     include_directories: nemolib_inc,
     install: true,
-    dependencies: thread_dep
+    dependencies: nemolib_dependencies
 )
 
 # dependency for use with other meson builds

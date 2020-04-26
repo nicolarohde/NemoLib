@@ -8,11 +8,12 @@
       
 #include "Config.hpp"               // configuration defines
 #include "SubgraphCount.hpp"        // SubgraphCount
-//#include "RandESU.hpp"              // RandESU
 #include "ESU_Parallel.hpp"
 #include "ThreadPool.hpp"           // ThreadPool
 #include "RandomGraphGenerator.hpp" // RandomGraphGenerator
 #include "Logger.hpp"
+
+#include "loguru.hpp"
 
 namespace Parallel_Analysis
 {
@@ -46,7 +47,10 @@ std::unordered_map<std::string, std::vector<double>> analyze(AnalyzeArgPack& arg
 
 		for (std::size_t i{0}; i < args.mu_li_graph_count; i++)
 		{
-			if (0 == i % 10) {Logger() << "Working on random graph " << i + 1 << "/" << args.mu_li_graph_count << std::endl;}
+			if (0 == i % 10) 
+            {
+                LOG_F(INFO, "Working on random graph %uz / %uz", i + 1, args.mu_li_graph_count);
+            }
 
 			// generate random graph
 			Graph randomGraph = std::move(RandomGraphGenerator::generate(args.m_graph_target));
@@ -54,7 +58,7 @@ std::unordered_map<std::string, std::vector<double>> analyze(AnalyzeArgPack& arg
 			ESU_Parallel::enumerate<SubgraphCount>(randomGraph, &all_subgraphs[i], static_cast<int>(args.mu_li_subgraph_size), args.m_tp_pool, args.m_str_labelg_path);
 		} // end for i
 
-		{Logger() << "Merging results ..." << std::endl;}
+        LOG_F(INFO, "Merging results ...");
 
 		for (auto& subgraphCount : all_subgraphs)
 		{

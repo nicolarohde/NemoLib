@@ -49,7 +49,7 @@ std::unordered_map<std::string, std::vector<double>> analyze(AnalyzeArgPack& arg
 		{
 			if (0 == i % 10) 
             {
-                LOG_F(INFO, "Working on random graph %uz / %uz", i + 1, args.mu_li_graph_count);
+                LOG_F(INFO, "Working on random graph %zu / %zu", i + 1, args.mu_li_graph_count);
             }
 
 			// generate random graph

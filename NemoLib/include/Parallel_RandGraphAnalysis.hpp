@@ -47,10 +47,7 @@ std::unordered_map<std::string, std::vector<double>> analyze(AnalyzeArgPack& arg
 
 		for (std::size_t i{0}; i < args.mu_li_graph_count; i++)
 		{
-			if (0 == i % 10) 
-            {
-                LOG_F(INFO, "Working on random graph %zu / %zu", i + 1, args.mu_li_graph_count);
-            }
+            LOG_F(INFO, "Working on random graph %zu / %zu", i + 1, args.mu_li_graph_count);
 
 			// generate random graph
 			Graph randomGraph = std::move(RandomGraphGenerator::generate(args.m_graph_target));

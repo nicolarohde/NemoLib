@@ -98,6 +98,6 @@ int main(int argc, char** argv)
 
 	cout << endl << data << endl;
 
-    LOG_F(INFO, "Time = %f.4 milliseconds", chrono_duration<milliseconds>(begin, end));
-    LOG_F(INFO, "Time = %f.4 seconds", chrono_duration<seconds>(begin, end));
+    LOG_F(INFO, "Time = %.4f milliseconds", chrono_duration<milliseconds>(begin, end));
+    LOG_F(INFO, "Time = %.4f seconds", chrono_duration<seconds>(begin, end));
 } // end Main

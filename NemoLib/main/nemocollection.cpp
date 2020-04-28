@@ -53,11 +53,18 @@ int main(int argc, char** argv)
 {
     // check if user wants to see the help
     // or if they gave too many parameters
-	if(argc > 7 || (argc > 1 && (string(argv[1]) == "-h" || string(argv[1]) == "--help")))
+	if(argc > 1 && (string(argv[1]) == "-h" || string(argv[1]) == "--help"))
 	{
 		display_help(argv[0]);
-		return argc > 7;
+		return 0;
 	} // end if
+
+    if (argc > 7)
+    {
+        std::cerr << "Received " << argc << " arguments but only wanted 7" << std::endl;
+        display_help(argv[0]);
+        return 1;
+    }
 
     // turn on logging 
     // -v option can be used to change verbosity

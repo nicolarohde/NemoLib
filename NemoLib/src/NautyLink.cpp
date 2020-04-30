@@ -88,7 +88,7 @@ std::string NautyLink::nautylabel_helper(Subgraph& subgraph)
 		} // end lambda
 	);// end callback
 
-    DLOG_F(DEBUG_LEVEL, "Getting ready to get the label for %s ...", my_label);
+    DLOG_F(DEBUG_LEVEL, "Getting ready to get the label for %s ...", my_label.c_str());
 
 	auto my_future = callback.get_future();
 
@@ -103,7 +103,7 @@ std::string NautyLink::nautylabel_helper(Subgraph& subgraph)
 
 	std::string str_cannonical_lbl = my_future.get();
 
-    DLOG_F(DEBUG_LEVEL, "G6 label %s has cannonical label %s", my_label, str_cannonical_lbl);
+    DLOG_F(DEBUG_LEVEL, "G6 label %s has cannonical label %s", my_label.c_str(), str_cannonical_lbl.c_str());
 
 	return str_cannonical_lbl;
 }

@@ -92,7 +92,7 @@ int main(int argc, char** argv)
     // start execution timer
 	auto begin = _Clock::now();
 
-    LOG_F(INFO, "Reading in the graph in file %s", filename);
+    LOG_F(INFO, "Reading in the graph in file %s", filename.c_str());
 
     // read in the given graph as undirected 
 	Graph targetg(filename, false);

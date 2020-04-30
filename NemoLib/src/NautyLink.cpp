@@ -61,9 +61,9 @@ std::string NautyLink::nautylabel_helper(Subgraph& subgraph)
 	// each 6 bits belong to a character
 	int counter = 0;
 
-	for (std::size_t i{0}; i < subsize; i++)
+	for (std::size_t j{0}; j < subsize; j++)
 	{
-		for (auto j = directed ? std::size_t {0} : std::size_t {i+1}; j < subsize; j++)
+		for (std::size_t i{0}; (directed ? i < subsize : i < j); i++)
 		{
 			if (true == vect_adj_matrix[i][j])
 			{
